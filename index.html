@@ -319,7 +319,6 @@
             50%      { opacity: 1; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); }
         }
 
-        /* Кнопки вкл/выкл (звук + музыка) */
         .sound-toggle, .music-toggle {
             position: absolute;
             top: 12px;
@@ -352,8 +351,9 @@
 </head>
 <body class="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-2 sm:p-4 relative">
 
-    <!-- 🎵 Фоновая музыка (зациклена, файл music.mp3 рядом с HTML) -->
+    <!-- 🎵 Фоновая музыка (файл music.m4a рядом с HTML) -->
     <audio id="bg-music" loop preload="auto">
+        <source src="music.m4a" type="audio/mp4">
         <source src="music.mp3" type="audio/mpeg">
     </audio>
 
@@ -361,7 +361,6 @@
 
     <div id="app" class="win11-glow w-full max-w-3xl rounded-2xl sm:rounded-3xl flex flex-col flex-grow sm:flex-grow-0 sm:min-h-[600px] shadow-2xl relative z-10 overflow-hidden">
         
-        <!-- Кнопка музыки (слева) -->
         <button id="music-toggle" class="music-toggle" onclick="toggleMusic()" title="Музыка вкл/выкл" aria-label="Музыка вкл/выкл">
             <svg id="music-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 18V5l12-2v13"></path>
@@ -376,7 +375,6 @@
             </svg>
         </button>
 
-        <!-- Кнопка звуковых эффектов (справа) -->
         <button id="sound-toggle" class="sound-toggle" onclick="toggleSound()" title="Звук вкл/выкл" aria-label="Звук вкл/выкл">
             <svg id="sound-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -479,16 +477,15 @@
 
 <script>
 // ============================================================
-// 🎵 ФОНОВАЯ МУЗЫКА (music.mp3)
+// 🎵 ФОНОВАЯ МУЗЫКА (music.m4a)
 // ============================================================
 const bgMusic = document.getElementById('bg-music');
-const MUSIC_VOLUME = 0.20;   // Громкость фоновой музыки (0.0 – 1.0)
+const MUSIC_VOLUME = 0.20;
 bgMusic.volume = MUSIC_VOLUME;
 
 let musicEnabled = true;
 let musicStarted = false;
 
-/** Запуск музыки (с учётом блокировки автоплея браузерами) */
 function startMusic() {
     if (!musicEnabled || musicStarted) return;
     const promise = bgMusic.play();
@@ -501,7 +498,6 @@ function startMusic() {
     }
 }
 
-/** Переключатель музыки */
 function toggleMusic() {
     musicEnabled = !musicEnabled;
     const onIcon = document.getElementById('music-on-icon');
@@ -525,7 +521,6 @@ function toggleMusic() {
     }
 }
 
-// Автозапуск музыки при ПЕРВОМ взаимодействии пользователя (клик/тап/клавиша)
 ['click', 'touchstart', 'keydown'].forEach(evt => {
     document.addEventListener(evt, function once() {
         startMusic();
@@ -533,7 +528,6 @@ function toggleMusic() {
     }, { once: true });
 });
 
-// Пауза музыки при сворачивании вкладки, возобновление при возврате
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         if (!bgMusic.paused) bgMusic.pause();
@@ -543,7 +537,7 @@ document.addEventListener('visibilitychange', () => {
 });
 
 // ============================================================
-// 🔊 ЗВУКОВЫЕ ЭФФЕКТЫ (Duolingo-style) через Web Audio API
+// 🔊 ЗВУКОВЫЕ ЭФФЕКТЫ (Duolingo-style)
 // ============================================================
 let audioCtx = null;
 let soundEnabled = true;
@@ -584,46 +578,42 @@ function playTone(freq, startTime, duration, type = 'sine', volume = 0.15) {
     osc.stop(startTime + duration + 0.05);
 }
 
-/** ✅ Звук правильного ответа (Duolingo ding-ding!) */
 function playCorrectSound() {
     if (!soundEnabled) return;
     const ctx = getAudioCtx();
     if (!ctx) return;
     const now = ctx.currentTime;
 
-    playTone(659.25, now,        0.12, 'sine', 0.18);  // E5
-    playTone(880.00, now + 0.07, 0.22, 'sine', 0.20);  // A5
-    playTone(1318.51, now + 0.07, 0.18, 'triangle', 0.06); // E6 искорка
-    playTone(1760.00, now + 0.11, 0.16, 'sine', 0.04);     // A6 блеск
+    playTone(659.25, now,        0.12, 'sine', 0.18);
+    playTone(880.00, now + 0.07, 0.22, 'sine', 0.20);
+    playTone(1318.51, now + 0.07, 0.18, 'triangle', 0.06);
+    playTone(1760.00, now + 0.11, 0.16, 'sine', 0.04);
 }
 
-/** ❌ Звук неправильного ответа (Duolingo buzz) */
 function playWrongSound() {
     if (!soundEnabled) return;
     const ctx = getAudioCtx();
     if (!ctx) return;
     const now = ctx.currentTime;
 
-    playTone(220.00, now,        0.18, 'sine', 0.18);  // A3
-    playTone(233.08, now,        0.18, 'sine', 0.14);  // A#3
-    playTone(174.61, now + 0.02, 0.20, 'triangle', 0.08); // F3
+    playTone(220.00, now,        0.18, 'sine', 0.18);
+    playTone(233.08, now,        0.18, 'sine', 0.14);
+    playTone(174.61, now + 0.02, 0.20, 'triangle', 0.08);
 }
 
-/** 🎉 Финальный звук завершения теста */
 function playFinishSound() {
     if (!soundEnabled) return;
     const ctx = getAudioCtx();
     if (!ctx) return;
     const now = ctx.currentTime;
 
-    playTone(523.25, now,        0.15, 'sine', 0.16);   // C5
-    playTone(659.25, now + 0.08, 0.15, 'sine', 0.16);   // E5
-    playTone(783.99, now + 0.16, 0.18, 'sine', 0.18);   // G5
-    playTone(1046.50, now + 0.24, 0.35, 'sine', 0.20);  // C6
-    playTone(1567.98, now + 0.24, 0.30, 'triangle', 0.06); // G6
+    playTone(523.25, now,        0.15, 'sine', 0.16);
+    playTone(659.25, now + 0.08, 0.15, 'sine', 0.16);
+    playTone(783.99, now + 0.16, 0.18, 'sine', 0.18);
+    playTone(1046.50, now + 0.24, 0.35, 'sine', 0.20);
+    playTone(1567.98, now + 0.24, 0.30, 'triangle', 0.06);
 }
 
-/** Переключатель звуковых эффектов */
 function toggleSound() {
     soundEnabled = !soundEnabled;
     const onIcon = document.getElementById('sound-on-icon');
@@ -823,7 +813,6 @@ function startQuiz(variant) {
     currentIndex = 0;
     userAnswers = [];
     
-    // Подстраховка: если первый клик был до автозапуска — стартуем музыку
     startMusic();
     
     subtitle.innerText = variant === 'v1' ? 'Вариант I' : 'Вариант II';
