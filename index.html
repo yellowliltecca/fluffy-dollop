@@ -2,199 +2,465 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <!-- КРИТИЧЕСКИ ВАЖНО ДЛЯ МОБИЛОК: предотвращает автозум при фокусе на select/input -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Тест по Истории России</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #0b0b0b;
-            color: #e0e0e0;
-            font-size: 16px; /* Базовый размер для читаемости на мобильных */
-            overscroll-behavior-y: none; /* Убирает "резинку" при скролле */
-        }
-        
-        /* Эффект стекла Windows 11 (Mica/Acrylic) */
-        .win11-glow {
-            background: rgba(28, 28, 28, 0.75);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), 
-                        0 0 0 1px rgba(0, 120, 212, 0.15),
-                        0 0 50px rgba(0, 120, 212, 0.2);
+        :root {
+            --bg-deep: #050810;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --accent-glow: #1d4ed8;
         }
 
-        /* Крупные кнопки для телефонов */
-        .win11-btn {
-            background-color: #005fb8;
-            box-shadow: 0 4px 14px 0 rgba(0, 120, 212, 0.4);
-            min-height: 54px; /* Touch-friendly height */
+        * { -webkit-tap-highlight-color: transparent; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-deep);
+            color: #e8edf5;
+            font-size: 16px;
+            overscroll-behavior-y: none;
+            position: relative;
+            min-height: 100dvh;
         }
+
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: 
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59, 130, 246, 0.18) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 50% at 80% 90%, rgba(29, 78, 216, 0.15) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 40% at 50% 50%, rgba(96, 165, 250, 0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+            animation: bgPulse 14s ease-in-out infinite alternate;
+        }
+
+        @keyframes bgPulse {
+            0%   { opacity: 0.7; transform: scale(1); }
+            100% { opacity: 1;   transform: scale(1.06); }
+        }
+
+        .particles {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatParticle linear infinite;
+            will-change: transform, opacity;
+            transform: translateZ(0);
+        }
+        @keyframes floatParticle {
+            0%   { transform: translateY(105vh) scale(0.4); opacity: 0; }
+            8%   { opacity: 1; }
+            50%  { opacity: 0.95; }
+            92%  { opacity: 1; }
+            100% { transform: translateY(-15vh) scale(1.3); opacity: 0; }
+        }
+
+        .win11-glow {
+            background: rgba(8, 13, 26, 0.32);
+            backdrop-filter: blur(18px) saturate(160%);
+            -webkit-backdrop-filter: blur(18px) saturate(160%);
+            border: 1px solid rgba(96, 165, 250, 0.22);
+            box-shadow: 
+                0 0 0 1px rgba(59, 130, 246, 0.08),
+                0 20px 60px -15px rgba(0, 0, 0, 0.75),
+                0 0 90px -20px rgba(59, 130, 246, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.08);
+            position: relative;
+            overflow: hidden;
+            isolation: isolate;
+            transform: translateZ(0);
+            -webkit-transform: translateZ(0);
+        }
+
+        .win11-glow::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 5%;
+            right: 5%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(147, 197, 253, 0.7), transparent);
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .win11-btn {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.9) 0%, rgba(29, 78, 216, 0.9) 100%);
+            box-shadow: 
+                0 4px 20px -4px rgba(37, 99, 235, 0.6),
+                inset 0 1px 0 rgba(255,255,255,0.15);
+            min-height: 54px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: subtlePulse 3s ease-in-out infinite;
+        }
+        .win11-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .win11-btn:hover:not(:disabled)::before { opacity: 1; }
         .win11-btn:hover:not(:disabled) {
-            background-color: #0078d4;
-            box-shadow: 0 6px 20px rgba(0, 120, 212, 0.6);
+            box-shadow: 
+                0 8px 30px -4px rgba(59, 130, 246, 0.7),
+                0 0 40px -8px rgba(96, 165, 250, 0.4),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+        .win11-btn:active:not(:disabled) { transform: translateY(0) scale(0.98); }
+
+        @keyframes subtlePulse {
+            0%, 100% { box-shadow: 0 4px 20px -4px rgba(37, 99, 235, 0.5), inset 0 1px 0 rgba(255,255,255,0.15); }
+            50%      { box-shadow: 0 4px 30px -2px rgba(59, 130, 246, 0.75), 0 0 40px -8px rgba(96, 165, 250, 0.35), inset 0 1px 0 rgba(255,255,255,0.15); }
         }
 
         .win11-btn-success {
-            background-color: #15803d;
-            box-shadow: 0 4px 14px 0 rgba(21, 128, 61, 0.4);
+            background: linear-gradient(135deg, rgba(5, 150, 105, 0.9) 0%, rgba(4, 120, 87, 0.9) 100%);
+            box-shadow: 
+                0 4px 20px -4px rgba(5, 150, 105, 0.6),
+                inset 0 1px 0 rgba(255,255,255,0.15);
             min-height: 54px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
+        .win11-btn-success::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .win11-btn-success:hover:not(:disabled)::before { opacity: 1; }
         .win11-btn-success:hover:not(:disabled) {
-            background-color: #16a34a;
-            box-shadow: 0 6px 20px rgba(21, 128, 61, 0.6);
+            box-shadow: 
+                0 8px 30px -4px rgba(16, 185, 129, 0.7),
+                0 0 40px -8px rgba(52, 211, 153, 0.4),
+                inset 0 1px 0 rgba(255,255,255,0.2);
+            transform: translateY(-2px);
         }
+        .win11-btn-success:active:not(:disabled) { transform: translateY(0) scale(0.98); }
 
-        /* Стилизация вариантов ответов (крупные плашки) */
         .option-label {
-            background-color: #1a1a1a;
-            border-color: #333;
-            transition: all 0.2s ease-in-out;
-            min-height: 60px; /* Touch-friendly */
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.55), rgba(15, 23, 42, 0.65));
+            backdrop-filter: blur(6px);
+            -webkit-backdrop-filter: blur(6px);
+            border-color: rgba(96, 165, 250, 0.25);
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            min-height: 60px;
+            position: relative;
+            overflow: hidden;
         }
+        .option-label::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent-light), var(--accent-glow));
+            opacity: 0;
+            transition: opacity 0.25s, transform 0.25s;
+            transform: scaleY(0);
+        }
+        .option-label:hover::before { opacity: 1; transform: scaleY(1); }
         @media (min-width: 768px) {
             .option-label:hover {
-                background-color: #252525;
-                border-color: #555;
+                background: linear-gradient(145deg, rgba(30, 41, 59, 0.75), rgba(15, 23, 42, 0.8));
+                border-color: rgba(96, 165, 250, 0.6);
                 transform: translateY(-2px);
+                box-shadow: 0 8px 25px -8px rgba(59, 130, 246, 0.5);
             }
         }
-        .option-label:active { transform: scale(0.98); }
+        .option-label:active { transform: scale(0.985); }
         
         .option-label:has(input:checked) {
-            background-color: rgba(0, 120, 212, 0.15);
-            border-color: #0078d4;
+            background: linear-gradient(145deg, rgba(37, 99, 235, 0.28), rgba(29, 78, 216, 0.18));
+            border-color: rgba(96, 165, 250, 0.85);
+            box-shadow: 
+                0 0 30px -5px rgba(59, 130, 246, 0.55),
+                inset 0 0 20px -10px rgba(96, 165, 250, 0.4);
         }
+        .option-label:has(input:checked)::before { opacity: 1; transform: scaleY(1); }
 
-        /* Увеличенные кастомные чекбоксы и радиокнопки для мобилок */
         .custom-input {
             width: 28px;
             height: 28px;
-            accent-color: #0078d4;
+            accent-color: #3b82f6;
             cursor: pointer;
-        }
-        
-        /* Цветовая индикация после проверки */
-        .correct-answer { 
-            background-color: rgba(34, 197, 94, 0.15) !important; 
-            border-color: #22c55e !important; 
-            box-shadow: inset 0 0 0 1px #22c55e !important;
-        }
-        .wrong-answer { 
-            background-color: rgba(239, 68, 68, 0.15) !important; 
-            border-color: #ef4444 !important; 
-            box-shadow: inset 0 0 0 1px #ef4444 !important;
-        }
-        .missed-answer {
-            background-color: rgba(234, 179, 8, 0.1) !important; 
-            border-color: #eab308 !important;
-            box-shadow: inset 0 0 0 1px #eab308 !important;
+            filter: drop-shadow(0 0 6px rgba(59, 130, 246, 0.5));
         }
 
-        /* Стилизация select (крупная, удобная для пальца) */
+        .correct-answer { 
+            background: linear-gradient(145deg, rgba(16, 185, 129, 0.22), rgba(5, 150, 105, 0.14)) !important; 
+            border-color: #34d399 !important; 
+            box-shadow: inset 0 0 0 1px #34d399, 0 0 25px -5px rgba(52, 211, 153, 0.5) !important;
+        }
+        .wrong-answer { 
+            background: linear-gradient(145deg, rgba(239, 68, 68, 0.22), rgba(220, 38, 38, 0.14)) !important; 
+            border-color: #f87171 !important; 
+            box-shadow: inset 0 0 0 1px #f87171, 0 0 25px -5px rgba(248, 113, 113, 0.4) !important;
+        }
+        .missed-answer {
+            background: linear-gradient(145deg, rgba(234, 179, 8, 0.15), rgba(202, 138, 4, 0.1)) !important; 
+            border-color: #facc15 !important;
+            box-shadow: inset 0 0 0 1px #facc15 !important;
+        }
+
         .custom-select {
             appearance: none;
-            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230078d4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-color: rgba(15, 23, 42, 0.75) !important;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2360a5fa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
             background-repeat: no-repeat;
             background-position: right 12px center;
             background-size: 1.2em;
             padding: 12px 36px 12px 16px !important;
             min-height: 50px;
             font-size: 16px;
+            transition: all 0.25s;
         }
-        
-        /* Кастомный скроллбар только для десктопа */
+        .custom-select:focus {
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.35);
+        }
+
         @media (min-width: 768px) {
             ::-webkit-scrollbar { width: 6px; }
-            ::-webkit-scrollbar-track { background: transparent; }
-            ::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
-            ::-webkit-scrollbar-thumb:hover { background: #0078d4; }
+            ::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.5); border-radius: 10px; }
+            ::-webkit-scrollbar-thumb { 
+                background: linear-gradient(180deg, #3b82f6, #1d4ed8); 
+                border-radius: 10px; 
+            }
+            ::-webkit-scrollbar-thumb:hover { background: #60a5fa; }
         }
+
+        @keyframes titleGlow {
+            0%, 100% { text-shadow: 0 0 20px rgba(59, 130, 246, 0.4); }
+            50%      { text-shadow: 0 0 40px rgba(59, 130, 246, 0.75), 0 0 80px rgba(96, 165, 250, 0.4); }
+        }
+        .title-glow { animation: titleGlow 4s ease-in-out infinite; }
+
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .screen-enter { animation: fadeSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
+
+        .progress-glow {
+            box-shadow: 0 0 12px rgba(59, 130, 246, 0.7), 0 0 30px rgba(59, 130, 246, 0.4);
+            background: linear-gradient(90deg, #2563eb, #60a5fa, #2563eb);
+            background-size: 200% 100%;
+            animation: progressShine 2s linear infinite;
+        }
+        @keyframes progressShine {
+            0%   { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+
+        @keyframes resultPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(34, 197, 94, 0.35); }
+            50%      { transform: scale(1.05); box-shadow: 0 0 40px rgba(34, 197, 94, 0.55), 0 0 80px rgba(34, 197, 94, 0.25); }
+        }
+        .result-icon { animation: resultPulse 2.5s ease-in-out infinite; }
+
+        .modal-glass {
+            background: rgba(8, 13, 26, 0.6);
+            backdrop-filter: blur(30px) saturate(180%);
+            -webkit-backdrop-filter: blur(30px) saturate(180%);
+            border: 1px solid rgba(96, 165, 250, 0.25);
+            box-shadow: 
+                0 0 0 1px rgba(59, 130, 246, 0.12),
+                0 25px 80px -20px rgba(0, 0, 0, 0.9),
+                0 0 60px -10px rgba(59, 130, 246, 0.4);
+        }
+
+        .glass-header {
+            background: linear-gradient(180deg, rgba(15, 23, 42, 0.45) 0%, rgba(15, 23, 42, 0.1) 100%);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .shuffle-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            color: #93c5fd;
+            background: rgba(59, 130, 246, 0.15);
+            border: 1px solid rgba(96, 165, 250, 0.35);
+            padding: 3px 8px;
+            border-radius: 999px;
+            margin-left: 8px;
+            backdrop-filter: blur(6px);
+            animation: shufflePulse 2.5s ease-in-out infinite;
+        }
+        @keyframes shufflePulse {
+            0%, 100% { opacity: 0.85; }
+            50%      { opacity: 1; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); }
+        }
+
+        /* Кнопки вкл/выкл (звук + музыка) */
+        .sound-toggle, .music-toggle {
+            position: absolute;
+            top: 12px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            background: rgba(30, 41, 59, 0.6);
+            border: 1px solid rgba(96, 165, 250, 0.3);
+            color: #93c5fd;
+            cursor: pointer;
+            transition: all 0.25s;
+            backdrop-filter: blur(10px);
+            z-index: 20;
+        }
+        .sound-toggle { right: 12px; }
+        .music-toggle { left: 12px; }
+
+        .sound-toggle:hover, .music-toggle:hover {
+            background: rgba(37, 99, 235, 0.35);
+            border-color: rgba(96, 165, 250, 0.6);
+            color: #bfdbfe;
+            transform: scale(1.05);
+        }
+        .sound-toggle:active, .music-toggle:active { transform: scale(0.95); }
+        .sound-toggle.muted, .music-toggle.muted { color: #64748b; border-color: rgba(100, 116, 139, 0.4); }
     </style>
 </head>
 <body class="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-2 sm:p-4 relative">
 
-    <!-- Фоновое свечение (закреплено) -->
-    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] sm:w-[800px] sm:h-[800px] bg-[#0078d4] rounded-full blur-[120px] opacity-15 pointer-events-none -z-10"></div>
+    <!-- 🎵 Фоновая музыка (зациклена, файл music.mp3 рядом с HTML) -->
+    <audio id="bg-music" loop preload="auto">
+        <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <div class="particles" id="particles"></div>
 
     <div id="app" class="win11-glow w-full max-w-3xl rounded-2xl sm:rounded-3xl flex flex-col flex-grow sm:flex-grow-0 sm:min-h-[600px] shadow-2xl relative z-10 overflow-hidden">
         
-        <!-- Шапка -->
-        <div class="border-b border-white/10 p-4 sm:p-6 text-center relative shrink-0">
-            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#0078d4] to-transparent opacity-80"></div>
-            <h1 class="text-xl sm:text-3xl font-bold text-white tracking-wide">Тест по Истории России</h1>
-            <p id="subtitle" class="text-sm sm:text-base text-gray-400 mt-1">Выберите вариант</p>
+        <!-- Кнопка музыки (слева) -->
+        <button id="music-toggle" class="music-toggle" onclick="toggleMusic()" title="Музыка вкл/выкл" aria-label="Музыка вкл/выкл">
+            <svg id="music-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="18" cy="16" r="3"></circle>
+            </svg>
+            <svg id="music-off-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="18" cy="16" r="3"></circle>
+                <line x1="2" y1="2" x2="22" y2="22"></line>
+            </svg>
+        </button>
+
+        <!-- Кнопка звуковых эффектов (справа) -->
+        <button id="sound-toggle" class="sound-toggle" onclick="toggleSound()" title="Звук вкл/выкл" aria-label="Звук вкл/выкл">
+            <svg id="sound-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path>
+            </svg>
+            <svg id="sound-off-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+                <line x1="23" y1="9" x2="17" y2="15"></line>
+                <line x1="17" y1="9" x2="23" y2="15"></line>
+            </svg>
+        </button>
+
+        <div class="glass-header border-b border-blue-500/20 p-4 sm:p-6 text-center relative shrink-0">
+            <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-90"></div>
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-8 bg-blue-500/15 blur-2xl rounded-full pointer-events-none"></div>
+            <h1 class="text-xl sm:text-3xl font-extrabold text-white tracking-wide title-glow relative z-10">Тест по Истории России</h1>
+            <p id="subtitle" class="text-sm sm:text-base text-blue-300/90 mt-1 font-medium relative z-10">Выберите вариант</p>
         </div>
 
-        <!-- Основной контент -->
-        <div class="p-4 sm:p-8 flex-grow flex flex-col justify-center overflow-y-auto" id="main-container">
+        <div class="p-4 sm:p-8 flex-grow flex flex-col justify-center overflow-y-auto relative" id="main-container">
             
-            <!-- Экран 1: Меню -->
             <div id="menu-screen" class="flex flex-col items-center justify-center space-y-6 sm:space-y-10 my-auto">
-                <h2 class="text-lg sm:text-xl font-medium text-gray-300 text-center">Доступно 2 варианта по 30 вопросов</h2>
+                <h2 class="text-lg sm:text-xl font-medium text-blue-200/90 text-center">Доступно 2 варианта по 30 вопросов</h2>
                 <div class="flex flex-col w-full sm:flex-row gap-4 sm:gap-6 max-w-md mx-auto">
-                    <button onclick="startQuiz('v1')" class="flex-1 bg-[#1a1a1a] text-[#5cb0ff] text-lg font-semibold py-5 px-6 border border-[#333] rounded-2xl shadow-lg active:scale-95 transition-transform relative overflow-hidden group">
+                    <button onclick="startQuiz('v1')" class="flex-1 bg-gradient-to-br from-[#1e293b]/70 to-[#0f172a]/80 backdrop-blur-md text-blue-300 text-lg font-semibold py-5 px-6 border border-blue-500/25 rounded-2xl shadow-lg active:scale-95 transition-all duration-300 relative overflow-hidden group hover:border-blue-400/60 hover:text-blue-200">
                         <span class="relative z-10">Вариант I</span>
-                        <div class="absolute inset-0 bg-gradient-to-r from-[#0078d4]/0 via-[#0078d4]/20 to-[#0078d4]/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/25 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600/0 via-blue-500/15 to-blue-600/0 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </button>
-                    <button onclick="startQuiz('v2')" class="flex-1 bg-[#1a1a1a] text-[#5cb0ff] text-lg font-semibold py-5 px-6 border border-[#333] rounded-2xl shadow-lg active:scale-95 transition-transform relative overflow-hidden group">
+                    <button onclick="startQuiz('v2')" class="flex-1 bg-gradient-to-br from-[#1e293b]/70 to-[#0f172a]/80 backdrop-blur-md text-blue-300 text-lg font-semibold py-5 px-6 border border-blue-500/25 rounded-2xl shadow-lg active:scale-95 transition-all duration-300 relative overflow-hidden group hover:border-blue-400/60 hover:text-blue-200">
                         <span class="relative z-10">Вариант II</span>
-                        <div class="absolute inset-0 bg-gradient-to-r from-[#0078d4]/0 via-[#0078d4]/20 to-[#0078d4]/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/25 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600/0 via-blue-500/15 to-blue-600/0 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                     </button>
                 </div>
             </div>
 
-            <!-- Экран 2: Тест -->
             <div id="quiz-screen" class="hidden flex-col h-full w-full max-w-2xl mx-auto">
                 
-                <!-- Прогресс -->
                 <div class="mb-4 sm:mb-6 shrink-0">
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs sm:text-sm font-medium text-gray-300 bg-[#222] border border-[#333] px-3 py-1 rounded-full" id="progress-text">1 / 30</span>
+                    <div class="flex justify-between items-center mb-2 flex-wrap gap-2">
+                        <span class="text-xs sm:text-sm font-semibold text-blue-200 bg-blue-950/40 backdrop-blur-sm border border-blue-500/35 px-3 py-1 rounded-full" id="progress-text">1 / 30</span>
+                        <span class="shuffle-badge" title="Порядок вариантов ответа перемешан">
+                            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                            Random
+                        </span>
                     </div>
-                    <div class="w-full bg-[#222] rounded-full h-2 overflow-hidden border border-[#333]">
-                        <div id="progress-bar" class="bg-[#0078d4] h-2 rounded-full transition-all duration-300 shadow-[0_0_8px_#0078d4]" style="width: 0%"></div>
+                    <div class="w-full bg-blue-950/50 backdrop-blur-sm rounded-full h-2 overflow-hidden border border-blue-500/25">
+                        <div id="progress-bar" class="progress-glow h-2 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
                     </div>
                 </div>
 
-                <!-- Вопрос и варианты -->
                 <div id="question-container" class="flex-grow flex flex-col pb-4">
                     <h3 id="question-text" class="text-[17px] sm:text-xl font-semibold text-white mb-1 leading-snug"></h3>
-                    <p id="question-hint" class="text-xs sm:text-sm text-[#5cb0ff] mb-4 sm:mb-6 opacity-90 font-medium"></p>
+                    <p id="question-hint" class="text-xs sm:text-sm text-blue-300/95 mb-4 sm:mb-6 opacity-90 font-medium"></p>
                     
                     <div id="options-container" class="space-y-3 sm:space-y-4 flex-grow">
-                        <!-- Динамический контент -->
                     </div>
                 </div>
 
-                <!-- Кнопка действия -->
-                <div class="mt-auto pt-4 border-t border-white/5 shrink-0 pb-2 sm:pb-0">
+                <div class="mt-auto pt-4 border-t border-blue-500/15 shrink-0 pb-2 sm:pb-0">
                     <button id="next-btn" onclick="handleAction()" class="win11-btn w-full text-white text-[17px] font-semibold py-3 sm:py-4 px-6 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:active:scale-100">
                         Ответить
                     </button>
                 </div>
             </div>
 
-            <!-- Экран 3: Результаты -->
             <div id="results-screen" class="hidden flex-col h-full w-full max-w-2xl mx-auto">
                 <div class="text-center mb-6 shrink-0 mt-4">
-                    <div class="w-20 h-20 sm:w-24 sm:h-24 bg-green-500/10 border border-green-500/30 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+                    <div class="result-icon w-20 h-20 sm:w-24 sm:h-24 bg-green-500/15 backdrop-blur-md border border-green-400/40 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-10 h-10 sm:w-12 sm:h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
                     </div>
                     <h2 class="text-2xl sm:text-3xl font-bold text-white mb-1">Тест завершен!</h2>
-                    <p class="text-base sm:text-lg text-gray-300">Счет: <span id="score" class="font-bold text-[#5cb0ff] text-xl sm:text-2xl"></span> из <span id="total-questions" class="font-bold">30</span></p>
+                    <p class="text-base sm:text-lg text-blue-200/95">Счет: <span id="score" class="font-bold text-blue-300 text-xl sm:text-2xl"></span> из <span id="total-questions" class="font-bold text-blue-300">30</span></p>
                 </div>
                 
-                <div class="flex-grow bg-[#141414] rounded-2xl p-3 sm:p-5 mb-6 overflow-y-auto border border-[#333] shadow-inner relative" id="mistakes-container" style="max-height: 50vh;">
-                    <h3 class="font-semibold text-base sm:text-lg mb-3 sm:mb-4 text-white sticky top-0 bg-[#141414] pb-2 border-b border-[#333] z-10">Ответы:</h3>
+                <div class="flex-grow bg-gradient-to-b from-[#0f172a]/60 to-[#0a0f1a]/70 backdrop-blur-md rounded-2xl p-3 sm:p-5 mb-6 overflow-y-auto border border-blue-500/25 shadow-inner relative" id="mistakes-container" style="max-height: 50vh;">
+                    <h3 class="font-semibold text-base sm:text-lg mb-3 sm:mb-4 text-white sticky top-0 bg-[#0f172a]/85 backdrop-blur-md pb-2 border-b border-blue-500/25 z-10">Ответы:</h3>
                     <div id="results-list" class="space-y-3 sm:space-y-4"></div>
                 </div>
 
                 <div class="shrink-0 mt-auto pb-2 sm:pb-0">
-                    <button onclick="goHome()" class="w-full bg-[#2a2a2a] hover:bg-[#333] active:bg-[#444] text-white text-[17px] font-semibold py-4 px-6 rounded-xl border border-[#444] transition duration-200 active:scale-95">
+                    <button onclick="goHome()" class="w-full bg-gradient-to-br from-[#1e293b]/80 to-[#0f172a]/90 backdrop-blur-md hover:from-[#253347]/90 hover:to-[#141d2e]/95 active:from-[#2a3a52] active:to-[#182338] text-blue-200 text-[17px] font-semibold py-4 px-6 rounded-xl border border-blue-500/35 transition-all duration-300 active:scale-95 hover:border-blue-400/60 hover:text-blue-100">
                         На главную
                     </button>
                 </div>
@@ -203,17 +469,228 @@
         </div>
     </div>
 
-    <!-- Модальное окно (Alert) -->
-    <div id="message-box" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50 p-4 transition-opacity">
-        <div class="win11-glow rounded-2xl p-6 w-full max-w-sm border border-white/20 shadow-2xl scale-100 transform transition-transform">
+    <div id="message-box" class="fixed inset-0 bg-black/60 backdrop-blur-md hidden items-center justify-center z-50 p-4 transition-opacity">
+        <div class="modal-glass rounded-2xl p-6 w-full max-w-sm shadow-2xl scale-100 transform transition-transform">
             <h3 class="text-xl font-bold text-white mb-2" id="msg-title">Внимание</h3>
-            <p class="text-gray-300 mb-6 text-[15px] leading-relaxed" id="msg-text">Выберите ответ.</p>
+            <p class="text-blue-200/85 mb-6 text-[15px] leading-relaxed" id="msg-text">Выберите ответ.</p>
             <button onclick="closeMessage()" class="win11-btn w-full text-white text-[17px] font-semibold py-3 px-6 rounded-xl active:scale-95 transition-transform">ОК</button>
         </div>
     </div>
 
 <script>
-// --- Полная база из 60 вопросов (2 варианта) ---
+// ============================================================
+// 🎵 ФОНОВАЯ МУЗЫКА (music.mp3)
+// ============================================================
+const bgMusic = document.getElementById('bg-music');
+const MUSIC_VOLUME = 0.20;   // Громкость фоновой музыки (0.0 – 1.0)
+bgMusic.volume = MUSIC_VOLUME;
+
+let musicEnabled = true;
+let musicStarted = false;
+
+/** Запуск музыки (с учётом блокировки автоплея браузерами) */
+function startMusic() {
+    if (!musicEnabled || musicStarted) return;
+    const promise = bgMusic.play();
+    if (promise !== undefined) {
+        promise.then(() => {
+            musicStarted = true;
+        }).catch(err => {
+            console.warn('Автовоспроизведение заблокировано:', err);
+        });
+    }
+}
+
+/** Переключатель музыки */
+function toggleMusic() {
+    musicEnabled = !musicEnabled;
+    const onIcon = document.getElementById('music-on-icon');
+    const offIcon = document.getElementById('music-off-icon');
+    const btn = document.getElementById('music-toggle');
+
+    if (musicEnabled) {
+        onIcon.classList.remove('hidden');
+        offIcon.classList.add('hidden');
+        btn.classList.remove('muted');
+        bgMusic.play().then(() => {
+            musicStarted = true;
+        }).catch(err => {
+            console.warn('Не удалось запустить музыку:', err);
+        });
+    } else {
+        onIcon.classList.add('hidden');
+        offIcon.classList.remove('hidden');
+        btn.classList.add('muted');
+        bgMusic.pause();
+    }
+}
+
+// Автозапуск музыки при ПЕРВОМ взаимодействии пользователя (клик/тап/клавиша)
+['click', 'touchstart', 'keydown'].forEach(evt => {
+    document.addEventListener(evt, function once() {
+        startMusic();
+        document.removeEventListener(evt, once);
+    }, { once: true });
+});
+
+// Пауза музыки при сворачивании вкладки, возобновление при возврате
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+        if (!bgMusic.paused) bgMusic.pause();
+    } else if (musicEnabled && musicStarted) {
+        bgMusic.play().catch(() => {});
+    }
+});
+
+// ============================================================
+// 🔊 ЗВУКОВЫЕ ЭФФЕКТЫ (Duolingo-style) через Web Audio API
+// ============================================================
+let audioCtx = null;
+let soundEnabled = true;
+
+function getAudioCtx() {
+    if (!audioCtx) {
+        try {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        } catch (e) {
+            console.warn('Web Audio API не поддерживается:', e);
+            return null;
+        }
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+    }
+    return audioCtx;
+}
+
+function playTone(freq, startTime, duration, type = 'sine', volume = 0.15) {
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, startTime);
+
+    gain.gain.setValueAtTime(0, startTime);
+    gain.gain.linearRampToValueAtTime(volume, startTime + 0.012);
+    gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(startTime);
+    osc.stop(startTime + duration + 0.05);
+}
+
+/** ✅ Звук правильного ответа (Duolingo ding-ding!) */
+function playCorrectSound() {
+    if (!soundEnabled) return;
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    playTone(659.25, now,        0.12, 'sine', 0.18);  // E5
+    playTone(880.00, now + 0.07, 0.22, 'sine', 0.20);  // A5
+    playTone(1318.51, now + 0.07, 0.18, 'triangle', 0.06); // E6 искорка
+    playTone(1760.00, now + 0.11, 0.16, 'sine', 0.04);     // A6 блеск
+}
+
+/** ❌ Звук неправильного ответа (Duolingo buzz) */
+function playWrongSound() {
+    if (!soundEnabled) return;
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    playTone(220.00, now,        0.18, 'sine', 0.18);  // A3
+    playTone(233.08, now,        0.18, 'sine', 0.14);  // A#3
+    playTone(174.61, now + 0.02, 0.20, 'triangle', 0.08); // F3
+}
+
+/** 🎉 Финальный звук завершения теста */
+function playFinishSound() {
+    if (!soundEnabled) return;
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    const now = ctx.currentTime;
+
+    playTone(523.25, now,        0.15, 'sine', 0.16);   // C5
+    playTone(659.25, now + 0.08, 0.15, 'sine', 0.16);   // E5
+    playTone(783.99, now + 0.16, 0.18, 'sine', 0.18);   // G5
+    playTone(1046.50, now + 0.24, 0.35, 'sine', 0.20);  // C6
+    playTone(1567.98, now + 0.24, 0.30, 'triangle', 0.06); // G6
+}
+
+/** Переключатель звуковых эффектов */
+function toggleSound() {
+    soundEnabled = !soundEnabled;
+    const onIcon = document.getElementById('sound-on-icon');
+    const offIcon = document.getElementById('sound-off-icon');
+    const btn = document.getElementById('sound-toggle');
+    if (soundEnabled) {
+        onIcon.classList.remove('hidden');
+        offIcon.classList.add('hidden');
+        btn.classList.remove('muted');
+        const ctx = getAudioCtx();
+        if (ctx) playTone(880, ctx.currentTime, 0.1, 'sine', 0.12);
+    } else {
+        onIcon.classList.add('hidden');
+        offIcon.classList.remove('hidden');
+        btn.classList.add('muted');
+    }
+}
+
+// ============================================================
+// УТИЛИТЫ
+// ============================================================
+function shuffleArray(arr) {
+    const a = [...arr];
+    for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+}
+
+function prepareQuestion(q) {
+    const qCopy = JSON.parse(JSON.stringify(q));
+    if ((qCopy.type === 'single' || qCopy.type === 'multiple') && qCopy.options) {
+        qCopy.options = shuffleArray(qCopy.options);
+    }
+    return qCopy;
+}
+
+// ============================================================
+// ГЕНЕРАЦИЯ ЧАСТИЦ
+// ============================================================
+(function createParticles() {
+    const container = document.getElementById('particles');
+    const count = 50;
+    for (let i = 0; i < count; i++) {
+        const p = document.createElement('div');
+        p.className = 'particle';
+        const size = Math.random() * 6 + 3;
+        p.style.left = Math.random() * 100 + '%';
+        p.style.width = size + 'px';
+        p.style.height = size + 'px';
+        p.style.animationDuration = (Math.random() * 12 + 8) + 's';
+        p.style.animationDelay = (Math.random() * 20) + 's';
+        p.style.opacity = (Math.random() * 0.5 + 0.4).toFixed(2);
+
+        const hue = 210 + Math.random() * 30;
+        const light = 65 + Math.random() * 15;
+        p.style.background = `radial-gradient(circle, hsla(${hue}, 95%, ${light}%, 1) 0%, hsla(${hue}, 90%, ${light - 15}%, 0.6) 50%, transparent 100%)`;
+        p.style.boxShadow = `0 0 ${8 + Math.random() * 12}px ${2 + Math.random() * 4}px hsla(${hue}, 95%, 65%, ${0.45 + Math.random() * 0.35})`;
+
+        container.appendChild(p);
+    }
+})();
+
+// ============================================================
+// БАЗА ВОПРОСОВ
+// ============================================================
 const quizData = {
     v1: [
         { q: "Какие из этих названий обозначали восточнославянские племена?", type: "multiple", options: ["кривичи", "печенеги", "радимичи", "хазары", "вятичи", "половцы"], correct: ["кривичи", "радимичи", "вятичи"] },
@@ -328,7 +805,6 @@ let currentIndex = 0;
 let userAnswers = [];
 let isQuestionAnswered = false;
 
-// DOM Elements
 const menuScreen = document.getElementById('menu-screen');
 const quizScreen = document.getElementById('quiz-screen');
 const resultsScreen = document.getElementById('results-screen');
@@ -343,15 +819,19 @@ const mainContainer = document.getElementById('main-container');
 
 function startQuiz(variant) {
     currentVariant = variant;
-    currentQuestions = quizData[variant];
+    currentQuestions = quizData[variant].map(prepareQuestion);
     currentIndex = 0;
     userAnswers = [];
+    
+    // Подстраховка: если первый клик был до автозапуска — стартуем музыку
+    startMusic();
     
     subtitle.innerText = variant === 'v1' ? 'Вариант I' : 'Вариант II';
     
     menuScreen.classList.add('hidden');
     quizScreen.classList.remove('hidden');
     quizScreen.classList.add('flex');
+    quizScreen.classList.add('screen-enter');
     
     renderQuestion();
 }
@@ -365,23 +845,21 @@ function renderQuestion() {
     if (q.type === 'matching') {
         questionHint.innerText = '(Выберите правильную цифру для каждой буквы)';
         
-        // Список дат (сверху)
-        let targetsHtml = `<div class="mb-5 p-3 sm:p-4 bg-[#111] border border-[#333] rounded-xl shadow-inner">
-            <div class="text-[13px] sm:text-sm font-semibold text-gray-400 mb-3 border-b border-[#333] pb-2 uppercase tracking-wider">Варианты для выбора:</div>
+        let targetsHtml = `<div class="mb-5 p-3 sm:p-4 bg-gradient-to-br from-[#0f172a]/60 to-[#0a0f1a]/70 backdrop-blur-md border border-blue-500/25 rounded-xl shadow-inner">
+            <div class="text-[13px] sm:text-sm font-semibold text-blue-300/90 mb-3 border-b border-blue-500/25 pb-2 uppercase tracking-wider">Варианты для выбора:</div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">`;
         q.right.forEach(r => {
-            targetsHtml += `<div class="text-gray-200 text-sm sm:text-[15px] flex items-center bg-[#1a1a1a] p-2 rounded-lg border border-[#2a2a2a]"><span class="font-bold text-white bg-[#0078d4] w-7 h-7 flex items-center justify-center rounded shrink-0 mr-3 shadow-md">${r.id}</span> <span class="leading-tight">${r.text}</span></div>`;
+            targetsHtml += `<div class="text-blue-100 text-sm sm:text-[15px] flex items-center bg-[#1e293b]/50 backdrop-blur-sm p-2 rounded-lg border border-blue-500/20"><span class="font-bold text-white bg-gradient-to-br from-blue-500 to-blue-700 w-7 h-7 flex items-center justify-center rounded shrink-0 mr-3 shadow-md">${r.id}</span> <span class="leading-tight">${r.text}</span></div>`;
         });
         targetsHtml += `</div></div>`;
         
-        // Селекты (выстроены вертикально для мобилок)
         let leftHtml = '<div class="space-y-3 sm:space-y-4">';
         q.left.forEach(l => {
             leftHtml += `
-            <div class="flex flex-row items-center p-3 sm:p-4 border border-[#333] bg-[#1a1a1a] rounded-xl relative group">
-                <div class="font-bold text-[#5cb0ff] text-lg mr-3 shrink-0">${l.id})</div>
-                <div class="text-gray-100 text-sm sm:text-base flex-grow pr-3 leading-snug">${l.text}</div>
-                <select id="match_${l.id}" class="custom-select shrink-0 bg-[#222] border-2 border-[#444] text-white rounded-xl focus:border-[#0078d4] outline-none transition-colors shadow-sm w-[72px] sm:w-24 text-center font-bold">
+            <div class="flex flex-row items-center p-3 sm:p-4 border border-blue-500/25 bg-gradient-to-br from-[#1e293b]/60 to-[#0f172a]/75 backdrop-blur-md rounded-xl relative group transition-all duration-300 hover:border-blue-400/50">
+                <div class="font-bold text-blue-300 text-lg mr-3 shrink-0">${l.id})</div>
+                <div class="text-blue-50 text-sm sm:text-base flex-grow pr-3 leading-snug">${l.text}</div>
+                <select id="match_${l.id}" class="custom-select shrink-0 border-2 border-blue-500/35 text-white rounded-xl focus:border-blue-400 outline-none transition-colors shadow-sm w-[72px] sm:w-24 text-center font-bold">
                     <option value="">-</option>
                     ${q.right.map(r => `<option value="${r.id}">${r.id}</option>`).join('')}
                 </select>
@@ -399,16 +877,16 @@ function renderQuestion() {
             const name = q.type === 'multiple' ? `q${currentIndex}_${index}` : `q${currentIndex}`;
             
             const label = document.createElement('label');
-            label.className = 'flex items-center p-3 sm:p-4 border border-[#333] rounded-xl cursor-pointer option-label w-full';
+            label.className = 'flex items-center p-3 sm:p-4 border border-blue-500/25 rounded-xl cursor-pointer option-label w-full';
             
             const input = document.createElement('input');
             input.type = inputType;
             input.name = name;
             input.value = opt;
-            input.className = 'custom-input shrink-0 mr-3 sm:mr-4 bg-[#222] border-[#555]';
+            input.className = 'custom-input shrink-0 mr-3 sm:mr-4 bg-[#1e293b]/70 border-blue-500/45';
             
             const span = document.createElement('span');
-            span.className = 'text-gray-100 text-[15px] sm:text-[17px] font-medium leading-tight flex-grow';
+            span.className = 'text-blue-50 text-[15px] sm:text-[17px] font-medium leading-tight flex-grow';
             span.innerText = opt;
             
             label.appendChild(input);
@@ -421,7 +899,6 @@ function renderQuestion() {
     nextBtn.innerText = 'Ответить';
     nextBtn.className = 'win11-btn w-full text-white text-[17px] font-semibold py-3 sm:py-4 px-6 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50';
     
-    // Прогресс
     progressText.innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
     progressBar.style.width = `${((currentIndex) / currentQuestions.length) * 100}%`;
 }
@@ -494,7 +971,7 @@ function checkAnswer() {
                 else if (!isSelected && isCorrectOption) {
                     label.classList.add('missed-answer');
                     const badge = document.createElement('span');
-                    badge.className = 'text-[#eab308] text-[11px] sm:text-xs font-bold ml-2 shrink-0 bg-yellow-500/20 px-2 py-1 rounded';
+                    badge.className = 'text-amber-300 text-[11px] sm:text-xs font-bold ml-2 shrink-0 bg-amber-500/20 backdrop-blur-sm px-2 py-1 rounded border border-amber-500/30';
                     badge.innerText = 'Пропущено';
                     label.appendChild(badge);
                 }
@@ -515,11 +992,13 @@ function checkAnswer() {
         userAnswers.push({ question: q.q, type: q.type, selected: selectedAnswers, correct: q.correct, isCorrect });
     }
     
+    if (isCorrect) playCorrectSound();
+    else playWrongSound();
+    
     isQuestionAnswered = true;
     nextBtn.innerText = currentIndex === currentQuestions.length - 1 ? 'Завершить тест' : 'Следующий вопрос';
     nextBtn.className = 'win11-btn-success w-full text-white text-[17px] font-semibold py-3 sm:py-4 px-6 rounded-xl transition-all duration-200 active:scale-95';
     
-    // Скролл вниз на телефоне, чтобы точно было видно кнопку после ответа
     setTimeout(() => { mainContainer.scrollTo({ top: mainContainer.scrollHeight, behavior: 'smooth' }); }, 100);
 }
 
@@ -537,6 +1016,9 @@ function finishQuiz() {
     quizScreen.classList.remove('flex');
     resultsScreen.classList.remove('hidden');
     resultsScreen.classList.add('flex');
+    resultsScreen.classList.add('screen-enter');
+    
+    playFinishSound();
     
     const score = userAnswers.filter(a => a.isCorrect).length;
     document.getElementById('score').innerText = score;
@@ -547,9 +1029,9 @@ function finishQuiz() {
     
     userAnswers.forEach((ans, i) => {
         const item = document.createElement('div');
-        item.className = `p-3 sm:p-4 rounded-xl border ${ans.isCorrect ? 'bg-green-500/10 border-green-500/30' : 'bg-red-500/10 border-red-500/30'}`;
+        item.className = `p-3 sm:p-4 rounded-xl border backdrop-blur-sm transition-all duration-300 ${ans.isCorrect ? 'bg-green-500/12 border-green-500/35 hover:border-green-400/55' : 'bg-red-500/12 border-red-500/35 hover:border-red-400/55'}`;
         
-        let html = `<p class="font-semibold text-gray-100 mb-2 text-sm sm:text-[15px] leading-snug">${i + 1}. ${ans.question}</p>`;
+        let html = `<p class="font-semibold text-blue-50 mb-2 text-sm sm:text-[15px] leading-snug">${i + 1}. ${ans.question}</p>`;
         
         if (ans.type === 'matching') {
             const userStr = Object.entries(ans.selectedObj).map(([k,v]) => `${k}-${v}`).join(', ');
