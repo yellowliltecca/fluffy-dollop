@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Тест по Истории России</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-deep: #050810;
@@ -31,9 +31,9 @@
             position: fixed;
             inset: 0;
             background: 
-                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59, 130, 246, 0.18) 0%, transparent 60%),
-                radial-gradient(ellipse 70% 50% at 80% 90%, rgba(29, 78, 216, 0.15) 0%, transparent 55%),
-                radial-gradient(ellipse 50% 40% at 50% 50%, rgba(96, 165, 250, 0.08) 0%, transparent 70%);
+                radial-gradient(ellipse 80% 60% at 20% 10%, rgba(59, 130, 246, 0.22) 0%, transparent 60%),
+                radial-gradient(ellipse 70% 50% at 80% 90%, rgba(29, 78, 216, 0.18) 0%, transparent 55%),
+                radial-gradient(ellipse 50% 40% at 50% 50%, rgba(96, 165, 250, 0.1) 0%, transparent 70%);
             pointer-events: none;
             z-index: 0;
             animation: bgPulse 14s ease-in-out infinite alternate;
@@ -66,6 +66,7 @@
             100% { transform: translateY(-15vh) scale(1.3); opacity: 0; }
         }
 
+        /* Компактная liquid-glass карточка */
         .win11-glow {
             background: rgba(8, 13, 26, 0.32);
             backdrop-filter: blur(18px) saturate(160%);
@@ -81,6 +82,7 @@
             isolation: isolate;
             transform: translateZ(0);
             -webkit-transform: translateZ(0);
+            transition: min-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .win11-glow::after {
@@ -319,8 +321,7 @@
             50%      { opacity: 1; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); }
         }
 
-        /* Кнопки вкл/выкл */
-        .sound-toggle, .music-toggle, .music2-toggle {
+        .sound-toggle, .music-toggle {
             position: absolute;
             top: 12px;
             width: 40px;
@@ -337,29 +338,224 @@
             backdrop-filter: blur(10px);
             z-index: 20;
         }
-        .music-toggle  { left: 12px; }
-        .music2-toggle { left: 60px; }
-        .sound-toggle  { right: 12px; }
+        .sound-toggle { right: 12px; }
+        .music-toggle { left: 12px; }
 
-        .sound-toggle:hover, .music-toggle:hover, .music2-toggle:hover {
+        .sound-toggle:hover, .music-toggle:hover {
             background: rgba(37, 99, 235, 0.35);
             border-color: rgba(96, 165, 250, 0.6);
             color: #bfdbfe;
             transform: scale(1.05);
         }
-        .sound-toggle:active, .music-toggle:active, .music2-toggle:active { transform: scale(0.95); }
-        .sound-toggle.muted, .music-toggle.muted, .music2-toggle.muted { color: #64748b; border-color: rgba(100, 116, 139, 0.4); }
+        .sound-toggle:active, .music-toggle:active { transform: scale(0.95); }
+        .sound-toggle.muted, .music-toggle.muted { color: #64748b; border-color: rgba(100, 116, 139, 0.4); }
+
+        /* ===== СТИЛЬНЫЙ СТАРТОВЫЙ ЭКРАН ===== */
+        .start-hero {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 8px 4px;
+            gap: 24px;
+            animation: fadeSlideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .hero-icon {
+            position: relative;
+            width: 96px;
+            height: 96px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 28px;
+            background: linear-gradient(145deg, rgba(37, 99, 235, 0.25), rgba(29, 78, 216, 0.1));
+            border: 1px solid rgba(96, 165, 250, 0.35);
+            box-shadow: 
+                0 0 40px -8px rgba(59, 130, 246, 0.55),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            animation: heroFloat 4s ease-in-out infinite;
+        }
+        .hero-icon::before {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 30px;
+            background: linear-gradient(135deg, rgba(96, 165, 250, 0.6), transparent 40%, transparent 60%, rgba(37, 99, 235, 0.6));
+            opacity: 0.6;
+            filter: blur(12px);
+            z-index: -1;
+            animation: heroGlow 3s ease-in-out infinite alternate;
+        }
+        @keyframes heroFloat {
+            0%, 100% { transform: translateY(0); }
+            50%      { transform: translateY(-6px); }
+        }
+        @keyframes heroGlow {
+            0%   { opacity: 0.4; }
+            100% { opacity: 0.85; }
+        }
+
+        .hero-icon svg {
+            width: 48px;
+            height: 48px;
+            color: #93c5fd;
+            filter: drop-shadow(0 0 12px rgba(96, 165, 250, 0.7));
+        }
+
+        .hero-title {
+            font-size: 26px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            line-height: 1.15;
+            background: linear-gradient(135deg, #ffffff 0%, #93c5fd 60%, #60a5fa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 40px rgba(96, 165, 250, 0.3);
+            margin: 0;
+        }
+        @media (min-width: 640px) {
+            .hero-title { font-size: 32px; }
+        }
+
+        .hero-subtitle {
+            font-size: 13px;
+            font-weight: 500;
+            color: rgba(191, 219, 254, 0.75);
+            letter-spacing: 0.3px;
+            margin-top: -8px;
+        }
+
+        .hero-divider {
+            width: 60px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(96, 165, 250, 0.8), transparent);
+            border-radius: 2px;
+            margin: 4px 0;
+        }
+
+        .variant-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            width: 100%;
+            max-width: 400px;
+        }
+        @media (max-width: 480px) {
+            .variant-grid { grid-template-columns: 1fr; gap: 10px; }
+        }
+
+        .variant-btn {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            padding: 20px 16px;
+            border-radius: 18px;
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.7), rgba(15, 23, 42, 0.85));
+            border: 1px solid rgba(96, 165, 250, 0.28);
+            color: #bfdbfe;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        .variant-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at 50% 0%, rgba(96, 165, 250, 0.25), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.35s;
+        }
+        .variant-btn:hover {
+            border-color: rgba(96, 165, 250, 0.7);
+            color: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 
+                0 12px 30px -10px rgba(59, 130, 246, 0.55),
+                0 0 0 1px rgba(96, 165, 250, 0.2);
+        }
+        .variant-btn:hover::before { opacity: 1; }
+        .variant-btn:active { transform: translateY(-1px) scale(0.98); }
+
+        .variant-num {
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: rgba(147, 197, 253, 0.7);
+        }
+
+        .variant-name {
+            font-size: 17px;
+            font-weight: 800;
+            color: #e0edff;
+            letter-spacing: 0.3px;
+        }
+
+        .variant-icon {
+            width: 32px;
+            height: 32px;
+            color: #60a5fa;
+            filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.6));
+            transition: transform 0.3s;
+        }
+        .variant-btn:hover .variant-icon { transform: scale(1.15); }
+
+        .hero-meta {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: rgba(147, 197, 253, 0.65);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: rgba(30, 41, 59, 0.4);
+            border: 1px solid rgba(96, 165, 250, 0.2);
+            backdrop-filter: blur(6px);
+        }
+        .hero-meta-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #60a5fa;
+            box-shadow: 0 0 8px #60a5fa;
+            animation: dotPulse 1.8s ease-in-out infinite;
+        }
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50%      { opacity: 0.5; transform: scale(0.85); }
+        }
+
+        /* Компактная карточка — уменьшаем min-height по умолчанию, растягиваем только в тесте */
+        #app {
+            min-height: 0;
+        }
+        #app.expanded {
+            min-height: 620px;
+        }
+        @media (min-width: 640px) {
+            #app.expanded { min-height: 640px; }
+        }
     </style>
 </head>
-<body class="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-2 sm:p-4 relative">
+<body class="min-h-[100dvh] flex flex-col items-center justify-center p-3 sm:p-4 relative">
 
-    <!-- 🎵 Фоновая музыка (music.m4a) -->
+    <!-- 🎵 Фоновая музыка (music.m4a + music2.m4a играют одновременно) -->
     <audio id="bg-music" loop preload="auto">
         <source src="music.m4a" type="audio/mp4">
         <source src="music.mp3" type="audio/mpeg">
     </audio>
-
-    <!-- 🎶 Вторая музыка (music2.m4a) -->
     <audio id="bg-music2" loop preload="auto">
         <source src="music2.m4a" type="audio/mp4">
         <source src="music2.mp3" type="audio/mpeg">
@@ -367,10 +563,10 @@
 
     <div class="particles" id="particles"></div>
 
-    <div id="app" class="win11-glow w-full max-w-3xl rounded-2xl sm:rounded-3xl flex flex-col flex-grow sm:flex-grow-0 sm:min-h-[600px] shadow-2xl relative z-10 overflow-hidden">
+    <div id="app" class="win11-glow w-full max-w-xl rounded-2xl sm:rounded-3xl flex flex-col shadow-2xl relative z-10 overflow-hidden">
         
-        <!-- Кнопка трека 1 (слева) -->
-        <button id="music-toggle" class="music-toggle" onclick="toggleMusic()" title="Трек 1 вкл/выкл" aria-label="Трек 1">
+        <!-- Кнопка музыки (слева) -->
+        <button id="music-toggle" class="music-toggle" onclick="toggleMusic()" title="Музыка вкл/выкл" aria-label="Музыка вкл/выкл">
             <svg id="music-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 18V5l12-2v13"></path>
                 <circle cx="6" cy="18" r="3"></circle>
@@ -384,25 +580,7 @@
             </svg>
         </button>
 
-        <!-- Кнопка трека 2 (левее звука) -->
-        <button id="music2-toggle" class="music2-toggle" onclick="toggleMusic2()" title="Трек 2 вкл/выкл" aria-label="Трек 2">
-            <svg id="music2-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18V5l12-2v13"></path>
-                <circle cx="6" cy="18" r="3"></circle>
-                <circle cx="18" cy="16" r="3"></circle>
-                <path d="M2 12h4"></path>
-                <path d="M2 8h4"></path>
-                <path d="M2 16h4"></path>
-            </svg>
-            <svg id="music2-off-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 18V5l12-2v13"></path>
-                <circle cx="6" cy="18" r="3"></circle>
-                <circle cx="18" cy="16" r="3"></circle>
-                <line x1="2" y1="2" x2="22" y2="22"></line>
-            </svg>
-        </button>
 
-        <!-- Кнопка звуковых эффектов (справа) -->
         <button id="sound-toggle" class="sound-toggle" onclick="toggleSound()" title="Звук вкл/выкл" aria-label="Звук вкл/выкл">
             <svg id="sound-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -416,31 +594,47 @@
             </svg>
         </button>
 
-        <div class="glass-header border-b border-blue-500/20 p-4 sm:p-6 text-center relative shrink-0">
-            <div class="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-blue-400 to-transparent opacity-90"></div>
-            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-1/2 h-8 bg-blue-500/15 blur-2xl rounded-full pointer-events-none"></div>
-            <h1 class="text-xl sm:text-3xl font-extrabold text-white tracking-wide title-glow relative z-10">Тест по Истории России</h1>
-            <p id="subtitle" class="text-sm sm:text-base text-blue-300/90 mt-1 font-medium relative z-10">Выберите вариант</p>
-        </div>
-
-        <div class="p-4 sm:p-8 flex-grow flex flex-col justify-center overflow-y-auto relative" id="main-container">
+        <div class="p-5 sm:p-8 flex-grow flex flex-col justify-center overflow-y-auto relative" id="main-container">
             
-            <div id="menu-screen" class="flex flex-col items-center justify-center space-y-6 sm:space-y-10 my-auto">
-                <h2 class="text-lg sm:text-xl font-medium text-blue-200/90 text-center">Доступно 2 варианта по 30 вопросов</h2>
-                <div class="flex flex-col w-full sm:flex-row gap-4 sm:gap-6 max-w-md mx-auto">
-                    <button onclick="startQuiz('v1')" class="flex-1 bg-gradient-to-br from-[#1e293b]/70 to-[#0f172a]/80 backdrop-blur-md text-blue-300 text-lg font-semibold py-5 px-6 border border-blue-500/25 rounded-2xl shadow-lg active:scale-95 transition-all duration-300 relative overflow-hidden group hover:border-blue-400/60 hover:text-blue-200">
-                        <span class="relative z-10">Вариант I</span>
-                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/25 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600/0 via-blue-500/15 to-blue-600/0 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+            <div id="menu-screen" class="start-hero my-auto">
+                <div class="hero-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                        <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                    </svg>
+                </div>
+
+                <div class="flex flex-col items-center gap-1">
+                    <h1 class="hero-title">История России</h1>
+                    <p class="hero-subtitle">Интерактивный тест знаний</p>
+                </div>
+
+                <div class="hero-divider"></div>
+
+                <div class="variant-grid">
+                    <button onclick="startQuiz('v1')" class="variant-btn">
+                        <svg class="variant-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <span class="variant-num">Вариант</span>
+                        <span class="variant-name">I</span>
                     </button>
-                    <button onclick="startQuiz('v2')" class="flex-1 bg-gradient-to-br from-[#1e293b]/70 to-[#0f172a]/80 backdrop-blur-md text-blue-300 text-lg font-semibold py-5 px-6 border border-blue-500/25 rounded-2xl shadow-lg active:scale-95 transition-all duration-300 relative overflow-hidden group hover:border-blue-400/60 hover:text-blue-200">
-                        <span class="relative z-10">Вариант II</span>
-                        <div class="absolute inset-0 bg-gradient-to-r from-blue-500/0 via-blue-500/25 to-blue-500/0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                        <div class="absolute -inset-1 bg-gradient-to-r from-blue-600/0 via-blue-500/15 to-blue-600/0 blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                    <button onclick="startQuiz('v2')" class="variant-btn">
+                        <svg class="variant-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                        </svg>
+                        <span class="variant-num">Вариант</span>
+                        <span class="variant-name">II</span>
                     </button>
+                </div>
+
+                <div class="hero-meta">
+                    <span class="hero-meta-dot"></span>
+                    2 варианта • 30 вопросов
                 </div>
             </div>
 
+            <!-- Экран 2: Тест -->
             <div id="quiz-screen" class="hidden flex-col h-full w-full max-w-2xl mx-auto">
                 
                 <div class="mb-4 sm:mb-6 shrink-0">
@@ -471,6 +665,7 @@
                 </div>
             </div>
 
+            <!-- Экран 3: Результаты -->
             <div id="results-screen" class="hidden flex-col h-full w-full max-w-2xl mx-auto">
                 <div class="text-center mb-6 shrink-0 mt-4">
                     <div class="result-icon w-20 h-20 sm:w-24 sm:h-24 bg-green-500/15 backdrop-blur-md border border-green-400/40 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -504,51 +699,24 @@
     </div>
 
 <script>
-// ============================================================
-// 🎵 ФОНОВАЯ МУЗЫКА (music.m4a + music2.m4a)
-// ============================================================
+
 const bgMusic  = document.getElementById('bg-music');
 const bgMusic2 = document.getElementById('bg-music2');
 
-const MUSIC_VOLUME  = 0.20;   // Громкость трека 1
-const MUSIC2_VOLUME = 0.15;   // Громкость трека 2 (чуть тише, чтобы не перебивал)
+const MUSIC_VOLUME  = 0.20;
+const MUSIC2_VOLUME = 0.15;
 bgMusic.volume  = MUSIC_VOLUME;
 bgMusic2.volume = MUSIC2_VOLUME;
 
-let musicEnabled  = true;
-let music2Enabled = true;
-let musicStarted  = false;
-let music2Started = false;
+let musicEnabled = true;
+let musicStarted = false;
 
-/** Универсальная попытка запуска трека */
-function tryPlay(audio, onSuccess) {
-    const promise = audio.play();
-    if (promise !== undefined) {
-        promise.then(onSuccess).catch(err => {
-            console.warn('Автовоспроизведение заблокировано:', err);
-        });
-    }
-}
-
-/** Запуск трека 1 */
 function startMusic() {
     if (!musicEnabled || musicStarted) return;
-    tryPlay(bgMusic, () => { musicStarted = true; });
+    bgMusic.play().then(() => { musicStarted = true; }).catch(err => console.warn('Автовоспроизведение заблокировано:', err));
+    bgMusic2.play().catch(err => console.warn('music2 заблокирован:', err));
 }
 
-/** Запуск трека 2 */
-function startMusic2() {
-    if (!music2Enabled || music2Started) return;
-    tryPlay(bgMusic2, () => { music2Started = true; });
-}
-
-/** Запуск обоих треков */
-function startAllMusic() {
-    startMusic();
-    startMusic2();
-}
-
-/** Вкл/выкл трека 1 */
 function toggleMusic() {
     musicEnabled = !musicEnabled;
     const onIcon  = document.getElementById('music-on-icon');
@@ -559,57 +727,34 @@ function toggleMusic() {
         onIcon.classList.remove('hidden');
         offIcon.classList.add('hidden');
         btn.classList.remove('muted');
-        tryPlay(bgMusic, () => { musicStarted = true; });
+        bgMusic.play().then(() => { musicStarted = true; }).catch(() => {});
+        bgMusic2.play().catch(() => {});
     } else {
         onIcon.classList.add('hidden');
         offIcon.classList.remove('hidden');
         btn.classList.add('muted');
         bgMusic.pause();
-    }
-}
-
-/** Вкл/выкл трека 2 */
-function toggleMusic2() {
-    music2Enabled = !music2Enabled;
-    const onIcon  = document.getElementById('music2-on-icon');
-    const offIcon = document.getElementById('music2-off-icon');
-    const btn     = document.getElementById('music2-toggle');
-
-    if (music2Enabled) {
-        onIcon.classList.remove('hidden');
-        offIcon.classList.add('hidden');
-        btn.classList.remove('muted');
-        tryPlay(bgMusic2, () => { music2Started = true; });
-    } else {
-        onIcon.classList.add('hidden');
-        offIcon.classList.remove('hidden');
-        btn.classList.add('muted');
         bgMusic2.pause();
     }
 }
 
-// Автозапуск обеих дорожек при первом взаимодействии
 ['click', 'touchstart', 'keydown'].forEach(evt => {
     document.addEventListener(evt, function once() {
-        startAllMusic();
+        startMusic();
         document.removeEventListener(evt, once);
     }, { once: true });
 });
 
-// Пауза при сворачивании вкладки, возобновление при возврате
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
         if (!bgMusic.paused)  bgMusic.pause();
         if (!bgMusic2.paused) bgMusic2.pause();
-    } else {
-        if (musicEnabled && musicStarted)   bgMusic.play().catch(() => {});
-        if (music2Enabled && music2Started) bgMusic2.play().catch(() => {});
+    } else if (musicEnabled && musicStarted) {
+        bgMusic.play().catch(() => {});
+        bgMusic2.play().catch(() => {});
     }
 });
 
-// ============================================================
-// 🔊 ЗВУКОВЫЕ ЭФФЕКТЫ (Duolingo-style)
-// ============================================================
 let audioCtx = null;
 let soundEnabled = true;
 
@@ -622,29 +767,22 @@ function getAudioCtx() {
             return null;
         }
     }
-    if (audioCtx.state === 'suspended') {
-        audioCtx.resume();
-    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
     return audioCtx;
 }
 
 function playTone(freq, startTime, duration, type = 'sine', volume = 0.15) {
     const ctx = getAudioCtx();
     if (!ctx) return;
-
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
-
     osc.type = type;
     osc.frequency.setValueAtTime(freq, startTime);
-
     gain.gain.setValueAtTime(0, startTime);
     gain.gain.linearRampToValueAtTime(volume, startTime + 0.012);
     gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-
     osc.connect(gain);
     gain.connect(ctx.destination);
-
     osc.start(startTime);
     osc.stop(startTime + duration + 0.05);
 }
@@ -654,7 +792,6 @@ function playCorrectSound() {
     const ctx = getAudioCtx();
     if (!ctx) return;
     const now = ctx.currentTime;
-
     playTone(659.25, now,        0.12, 'sine', 0.18);
     playTone(880.00, now + 0.07, 0.22, 'sine', 0.20);
     playTone(1318.51, now + 0.07, 0.18, 'triangle', 0.06);
@@ -666,7 +803,6 @@ function playWrongSound() {
     const ctx = getAudioCtx();
     if (!ctx) return;
     const now = ctx.currentTime;
-
     playTone(220.00, now,        0.18, 'sine', 0.18);
     playTone(233.08, now,        0.18, 'sine', 0.14);
     playTone(174.61, now + 0.02, 0.20, 'triangle', 0.08);
@@ -677,7 +813,6 @@ function playFinishSound() {
     const ctx = getAudioCtx();
     if (!ctx) return;
     const now = ctx.currentTime;
-
     playTone(523.25, now,        0.15, 'sine', 0.16);
     playTone(659.25, now + 0.08, 0.15, 'sine', 0.16);
     playTone(783.99, now + 0.16, 0.18, 'sine', 0.18);
@@ -703,9 +838,6 @@ function toggleSound() {
     }
 }
 
-// ============================================================
-// УТИЛИТЫ
-// ============================================================
 function shuffleArray(arr) {
     const a = [...arr];
     for (let i = a.length - 1; i > 0; i--) {
@@ -723,9 +855,6 @@ function prepareQuestion(q) {
     return qCopy;
 }
 
-// ============================================================
-// ГЕНЕРАЦИЯ ЧАСТИЦ
-// ============================================================
 (function createParticles() {
     const container = document.getElementById('particles');
     const count = 50;
@@ -739,19 +868,14 @@ function prepareQuestion(q) {
         p.style.animationDuration = (Math.random() * 12 + 8) + 's';
         p.style.animationDelay = (Math.random() * 20) + 's';
         p.style.opacity = (Math.random() * 0.5 + 0.4).toFixed(2);
-
         const hue = 210 + Math.random() * 30;
         const light = 65 + Math.random() * 15;
         p.style.background = `radial-gradient(circle, hsla(${hue}, 95%, ${light}%, 1) 0%, hsla(${hue}, 90%, ${light - 15}%, 0.6) 50%, transparent 100%)`;
         p.style.boxShadow = `0 0 ${8 + Math.random() * 12}px ${2 + Math.random() * 4}px hsla(${hue}, 95%, 65%, ${0.45 + Math.random() * 0.35})`;
-
         container.appendChild(p);
     }
 })();
 
-// ============================================================
-// БАЗА ВОПРОСОВ
-// ============================================================
 const quizData = {
     v1: [
         { q: "Какие из этих названий обозначали восточнославянские племена?", type: "multiple", options: ["кривичи", "печенеги", "радимичи", "хазары", "вятичи", "половцы"], correct: ["кривичи", "радимичи", "вятичи"] },
@@ -859,13 +983,13 @@ const quizData = {
     ]
 };
 
-// State
 let currentVariant = null;
 let currentQuestions = [];
 let currentIndex = 0;
 let userAnswers = [];
 let isQuestionAnswered = false;
 
+const appEl = document.getElementById('app');
 const menuScreen = document.getElementById('menu-screen');
 const quizScreen = document.getElementById('quiz-screen');
 const resultsScreen = document.getElementById('results-screen');
@@ -884,9 +1008,9 @@ function startQuiz(variant) {
     currentIndex = 0;
     userAnswers = [];
     
-    startAllMusic();
-    
-    subtitle.innerText = variant === 'v1' ? 'Вариант I' : 'Вариант II';
+    startMusic();
+
+    appEl.classList.add('expanded');
     
     menuScreen.classList.add('hidden');
     quizScreen.classList.remove('hidden');
@@ -1118,6 +1242,8 @@ function goHome() {
     resultsScreen.classList.remove('flex');
     menuScreen.classList.remove('hidden');
     progressBar.style.width = '0%';
+    // Уменьшаем карточку обратно
+    appEl.classList.remove('expanded');
 }
 
 const msgBox = document.getElementById('message-box');
