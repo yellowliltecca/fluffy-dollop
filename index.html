@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <!-- КРИТИЧЕСКИ ВАЖНО ДЛЯ МОБИЛОК: предотвращает автозум при фокусе на select/input -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Тест по Истории России</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0b0b;
+            color: #e0e0e0;
+            font-size: 16px; /* Базовый размер для читаемости на мобильных */
+            overscroll-behavior-y: none; /* Убирает "резинку" при скролле */
+        }
+        
+        /* Эффект стекла Windows 11 (Mica/Acrylic) */
+        .win11-glow {
+            background: rgba(28, 28, 28, 0.75);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.6), 
+                        0 0 0 1px rgba(0, 120, 212, 0.15),
+                        0 0 50px rgba(0, 120, 212, 0.2);
+        }
+
+        /* Крупные кнопки для телефонов */
+        .win11-btn {
+            background-color: #005fb8;
+            box-shadow: 0 4px 14px 0 rgba(0, 120, 212, 0.4);
+            min-height: 54px; /* Touch-friendly height */
+        }
+        .win11-btn:hover:not(:disabled) {
+            background-color: #0078d4;
+            box-shadow: 0 6px 20px rgba(0, 120, 212, 0.6);
+        }
+
+        .win11-btn-success {
+            background-color: #15803d;
+            box-shadow: 0 4px 14px 0 rgba(21, 128, 61, 0.4);
+            min-height: 54px;
+        }
+        .win11-btn-success:hover:not(:disabled) {
+            background-color: #16a34a;
+            box-shadow: 0 6px 20px rgba(21, 128, 61, 0.6);
+        }
+
+        /* Стилизация вариантов ответов (крупные плашки) */
+        .option-label {
+            background-color: #1a1a1a;
+            border-color: #333;
+            transition: all 0.2s ease-in-out;
+            min-height: 60px; /* Touch-friendly */
+        }
+        @media (min-width: 768px) {
+            .option-label:hover {
+                background-color: #252525;
+                border-color: #555;
+                transform: translateY(-2px);
+            }
+        }
+        .option-label:active { transform: scale(0.98); }
+        
+        .option-label:has(input:checked) {
+            background-color: rgba(0, 120, 212, 0.15);
+            border-color: #0078d4;
+        }
+
+        /* Увеличенные кастомные чекбоксы и радиокнопки для мобилок */
+        .custom-input {
+            width: 28px;
+            height: 28px;
+            accent-color: #0078d4;
+            cursor: pointer;
+        }
+        
+        /* Цветовая индикация после проверки */
+        .correct-answer { 
+            background-color: rgba(34, 197, 94, 0.15) !important; 
+            border-color: #22c55e !important; 
+            box-shadow: inset 0 0 0 1px #22c55e !important;
+        }
+        .wrong-answer { 
+            background-color: rgba(239, 68, 68, 0.15) !important; 
+            border-color: #ef4444 !important; 
+            box-shadow: inset 0 0 0 1px #ef4444 !important;
+        }
+        .missed-answer {
+            background-color: rgba(234, 179, 8, 0.1) !important; 
+            border-color: #eab308 !important;
+            box-shadow: inset 0 0 0 1px #eab308 !important;
+        }
+
+        /* Стилизация select (крупная, удобная для пальца) */
+        .custom-select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%230078d4' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 1.2em;
+            padding: 12px 36px 12px 16px !important;
+            min-height: 50px;
+            font-size: 16px;
+        }
+        
+        /* Кастомный скроллбар только для десктопа */
+        @media (min-width: 768px) {
+            ::-webkit-scrollbar { width: 6px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { background: #444; border-radius: 10px; }
+            ::-webkit-scrollbar-thumb:hover { background: #0078d4; }
+        }
+    </style>
+</head>
+<body class="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-2 sm:p-4 relative">
+
+    <!-- Фоновое свечение (закреплено) -->
+    <div class="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[150vw] h-[150vw] sm:w-[800px] sm:h-[800px] bg-[#0078d4] rounded-full blur-[120px] opacity-15 pointer-events-none -z-10"></div>
+
+    <div id="app" class="win11-glow w-full max-w-3xl rounded-2xl sm:rounded-3xl flex flex-col flex-grow sm:flex-grow-0 sm:min-h-[600px] shadow-2xl relative z-10 overflow-hidden">
+        
+        <!-- Шапка -->
+        <div class="border-b border-white/10 p-4 sm:p-6 text-center relative shrink-0">
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#0078d4] to-transparent opacity-80"></div>
+            <h1 class="text-xl sm:text-3xl font-bold text-white tracking-wide">Тест по Истории России</h1>
+            <p id="subtitle" class="text-sm sm:text-base text-gray-400 mt-1">Выберите вариант</p>
+        </div>
+
+        <!-- Основной контент -->
+        <div class="p-4 sm:p-8 flex-grow flex flex-col justify-center overflow-y-auto" id="main-container">
+            
+            <!-- Экран 1: Меню -->
+            <div id="menu-screen" class="flex flex-col items-center justify-center space-y-6 sm:space-y-10 my-auto">
+                <h2 class="text-lg sm:text-xl font-medium text-gray-300 text-center">Доступно 2 варианта по 30 вопросов</h2>
+                <div class="flex flex-col w-full sm:flex-row gap-4 sm:gap-6 max-w-md mx-auto">
+                    <button onclick="startQuiz('v1')" class="flex-1 bg-[#1a1a1a] text-[#5cb0ff] text-lg font-semibold py-5 px-6 border border-[#333] rounded-2xl shadow-lg active:scale-95 transition-transform relative overflow-hidden group">
+                        <span class="relative z-10">Вариант I</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-[#0078d4]/0 via-[#0078d4]/20 to-[#0078d4]/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </button>
+                    <button onclick="startQuiz('v2')" class="flex-1 bg-[#1a1a1a] text-[#5cb0ff] text-lg font-semibold py-5 px-6 border border-[#333] rounded-2xl shadow-lg active:scale-95 transition-transform relative overflow-hidden group">
+                        <span class="relative z-10">Вариант II</span>
+                        <div class="absolute inset-0 bg-gradient-to-r from-[#0078d4]/0 via-[#0078d4]/20 to-[#0078d4]/0 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Экран 2: Тест -->
+            <div id="quiz-screen" class="hidden flex-col h-full w-full max-w-2xl mx-auto">
+                
+                <!-- Прогресс -->
+                <div class="mb-4 sm:mb-6 shrink-0">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs sm:text-sm font-medium text-gray-300 bg-[#222] border border-[#333] px-3 py-1 rounded-full" id="progress-text">1 / 30</span>
+                    </div>
+                    <div class="w-full bg-[#222] rounded-full h-2 overflow-hidden border border-[#333]">
+                        <div id="progress-bar" class="bg-[#0078d4] h-2 rounded-full transition-all duration-300 shadow-[0_0_8px_#0078d4]" style="width: 0%"></div>
+                    </div>
+                </div>
+
+                <!-- Вопрос и варианты -->
+                <div id="question-container" class="flex-grow flex flex-col pb-4">
+                    <h3 id="question-text" class="text-[17px] sm:text-xl font-semibold text-white mb-1 leading-snug"></h3>
+                    <p id="question-hint" class="text-xs sm:text-sm text-[#5cb0ff] mb-4 sm:mb-6 opacity-90 font-medium"></p>
+                    
+                    <div id="options-container" class="space-y-3 sm:space-y-4 flex-grow">
+                        <!-- Динамический контент -->
+                    </div>
+                </div>
+
+                <!-- Кнопка действия -->
+                <div class="mt-auto pt-4 border-t border-white/5 shrink-0 pb-2 sm:pb-0">
+                    <button id="next-btn" onclick="handleAction()" class="win11-btn w-full text-white text-[17px] font-semibold py-3 sm:py-4 px-6 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:active:scale-100">
+                        Ответить
+                    </button>
+                </div>
+            </div>
+
+            <!-- Экран 3: Результаты -->
+            <div id="results-screen" class="hidden flex-col h-full w-full max-w-2xl mx-auto">
+                <div class="text-center mb-6 shrink-0 mt-4">
+                    <div class="w-20 h-20 sm:w-24 sm:h-24 bg-green-500/10 border border-green-500/30 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+                        <svg class="w-10 h-10 sm:w-12 sm:h-12 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-bold text-white mb-1">Тест завершен!</h2>
+                    <p class="text-base sm:text-lg text-gray-300">Счет: <span id="score" class="font-bold text-[#5cb0ff] text-xl sm:text-2xl"></span> из <span id="total-questions" class="font-bold">30</span></p>
+                </div>
+                
+                <div class="flex-grow bg-[#141414] rounded-2xl p-3 sm:p-5 mb-6 overflow-y-auto border border-[#333] shadow-inner relative" id="mistakes-container" style="max-height: 50vh;">
+                    <h3 class="font-semibold text-base sm:text-lg mb-3 sm:mb-4 text-white sticky top-0 bg-[#141414] pb-2 border-b border-[#333] z-10">Ответы:</h3>
+                    <div id="results-list" class="space-y-3 sm:space-y-4"></div>
+                </div>
+
+                <div class="shrink-0 mt-auto pb-2 sm:pb-0">
+                    <button onclick="goHome()" class="w-full bg-[#2a2a2a] hover:bg-[#333] active:bg-[#444] text-white text-[17px] font-semibold py-4 px-6 rounded-xl border border-[#444] transition duration-200 active:scale-95">
+                        На главную
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Модальное окно (Alert) -->
+    <div id="message-box" class="fixed inset-0 bg-black/80 backdrop-blur-md hidden items-center justify-center z-50 p-4 transition-opacity">
+        <div class="win11-glow rounded-2xl p-6 w-full max-w-sm border border-white/20 shadow-2xl scale-100 transform transition-transform">
+            <h3 class="text-xl font-bold text-white mb-2" id="msg-title">Внимание</h3>
+            <p class="text-gray-300 mb-6 text-[15px] leading-relaxed" id="msg-text">Выберите ответ.</p>
+            <button onclick="closeMessage()" class="win11-btn w-full text-white text-[17px] font-semibold py-3 px-6 rounded-xl active:scale-95 transition-transform">ОК</button>
+        </div>
+    </div>
+
+<script>
+// --- Полная база из 60 вопросов (2 варианта) ---
+const quizData = {
+    v1: [
+        { q: "Какие из этих названий обозначали восточнославянские племена?", type: "multiple", options: ["кривичи", "печенеги", "радимичи", "хазары", "вятичи", "половцы"], correct: ["кривичи", "радимичи", "вятичи"] },
+        { q: "Укажите дату объединения Новгорода и Киева под властью князя Олега.", type: "single", options: ["862 г.", "882 г.", "907 г.", "988 г."], correct: ["882 г."] },
+        { q: "Племенным центром полян был ...", type: "single", options: ["Искоростень", "Новгород", "Киев", "Чернигов"], correct: ["Киев"] },
+        { q: "Кто первым из русских князей принял христианство?", type: "single", options: ["Владимир Святой", "Ярослав Мудрый", "Ольга", "Святослав"], correct: ["Ольга"] },
+        { 
+            q: "Сопоставьте события и даты:", type: "matching", 
+            left: [ {id: 'а', text: 'Крещение Руси'}, {id: 'б', text: 'Восточные славяне (упоминание/договор)'}, {id: 'в', text: 'Первый поход Олега на Константинополь'}, {id: 'г', text: 'Первый поход Игоря на Константинополь'} ],
+            right: [ {id: '1', text: '945 г.'}, {id: '2', text: '988 г.'}, {id: '3', text: '907 г.'}, {id: '4', text: '941 г.'} ],
+            correct: { 'а': '2', 'б': '1', 'в': '3', 'г': '4' }
+        },
+        { q: "Кто из киевских князей разгромил Хазарский каганат?", type: "single", options: ["Святослав", "Игорь", "Олег", "Владимир Мономах"], correct: ["Святослав"] },
+        { q: "Какие из этих деяний не относятся к Ярославу Мудрому?", type: "multiple", options: ["создание Русской Правды", "победил половцев", "организовал крещение Руси", "строительство Софийского собора"], correct: ["победил половцев", "организовал крещение Руси"] },
+        { q: "В середине XI — середине XIII века соседями Руси на юге были?", type: "single", options: ["хазары", "печенеги", "половцы", "монголы"], correct: ["половцы"] },
+        { q: "В каких землях в период раздробленности существовал вечевой строй?", type: "single", options: ["Владимиро-Суздальская", "Галицко-Волынская", "Киевская", "Псковская"], correct: ["Псковская"] },
+        { q: "Первое столкновение между русскими и монгольскими войсками произошло в…", type: "single", options: ["1223 г.", "1237 г.", "1240 г.", "1380 г."], correct: ["1223 г."] },
+        { q: "Какие из этих городов не были разорены во время татаро-монгольского нашествия?", type: "multiple", options: ["Рязань", "Псков", "Киев", "Новгород"], correct: ["Псков", "Новгород"] },
+        { q: "Москва стала центром удельного княжества при князе…", type: "single", options: ["Александр Невский", "Юрий Долгорукий", "Иван Калита", "Даниил Александрович"], correct: ["Иван Калита"] },
+        { q: "Иван Калита добился:", type: "multiple", options: ["права собирать дань с русских земель для Орды", "независимости от Орды", "ярлыка на великое княжение", "переезда митрополита в Москву", "присоединения Новгорода"], correct: ["права собирать дань с русских земель для Орды", "ярлыка на великое княжение", "переезда митрополита в Москву"] },
+        { 
+            q: "Сопоставьте княжения и даты:", type: "matching", 
+            left: [ {id: 'а', text: 'Княжение Василия III'}, {id: 'б', text: 'Княжение Дмитрия Донского'}, {id: 'в', text: 'Княжение Ивана III'}, {id: 'г', text: 'Княжение Василия I'} ],
+            right: [ {id: '1', text: '1389–1425 гг.'}, {id: '2', text: '1462–1505 гг.'}, {id: '3', text: '1359–1389 гг.'}, {id: '4', text: '1505–1533 гг.'} ],
+            correct: { 'а': '4', 'б': '3', 'в': '2', 'г': '1' }
+        },
+        { q: "Какие из этих битв закончились победой русских войск над ордынскими?", type: "multiple", options: ["битва на реке Калке", "битва на реке Воже", "битва на реке Сить", "на Куликовом поле"], correct: ["битва на реке Воже", "на Куликовом поле"] },
+        { q: "Впервые право перехода крестьян от землевладельцев - «Юрьев день» упомянуто в…", type: "single", options: ["Русской Правде", "Судебнике 1497 года", "Судебнике 1550 года", "Соборном уложении 1649 года"], correct: ["Судебнике 1497 года"] },
+        { q: "При каком из московских князей двуглавый орёл стал использоваться в качестве государственного символа России?", type: "single", options: ["Иван Калита", "Дмитрий Донской", "Иван III", "Иван IV Грозный"], correct: ["Иван III"] },
+        { q: "Когда состоялось венчание на царство Ивана IV?", type: "single", options: ["1533 г.", "1547 г.", "1550 г.", "1565 г."], correct: ["1547 г."] },
+        { q: "В Избранную раду входили:", type: "single", options: ["выборные от всех сословий", "доверенные лица Ивана IV", "члены Боярской думы", "иностранные советники"], correct: ["доверенные лица Ивана IV"] },
+        { q: "Что такое местничество?", type: "single", options: ["система распределения служебных мест с учётом происхождения и положения предков", "порядок наследования земли", "сбор дани", "орган местного самоуправления"], correct: ["система распределения служебных мест с учётом происхождения и положения предков"] },
+        { q: "Кто из этих деятелей выступал против опричнины?", type: "multiple", options: ["Малюта Скуратов", "Андрей Курбский", "митрополит Филипп", "Алексей Басманов"], correct: ["Андрей Курбский", "митрополит Филипп"] },
+        { 
+            q: "Сопоставление:", type: "matching", 
+            left: [ {id: 'а', text: 'Созыв первого Земского собора'}, {id: 'б', text: 'Поход опричного войска на Новгород'}, {id: 'в', text: 'Создание стрелецкого войска'}, {id: 'г', text: 'Поход Девлет-Гирея на Москву'} ],
+            right: [ {id: '1', text: '1570 г.'}, {id: '2', text: '1550 г.'}, {id: '3', text: '1549 г.'}, {id: '4', text: '1571 г.'} ],
+            correct: { 'а': '3', 'б': '1', 'в': '2', 'г': '4' }
+        },
+        { q: "Укажите даты правления Ивана IV.", type: "single", options: ["1505–1533 гг.", "1533–1584 гг.", "1584–1598 гг.", "1547–1584 гг."], correct: ["1533–1584 гг."] },
+        { q: "Главной причиной Ливонской войны было…", type: "single", options: ["желание присоединить Крым", "стремление получить доступ к портам на Балтийском море", "конфликт с Речью Посполитой", "нападение Ливонского ордена"], correct: ["стремление получить доступ к портам на Балтийском море"] },
+        { q: "Какие из этих стран были завоёваны Россией в XVI веке?", type: "multiple", options: ["Крымское ханство", "Казанское ханство", "Сибирское ханство", "Астраханское ханство"], correct: ["Казанское ханство", "Астраханское ханство"] },
+        { 
+            q: "Сопоставьте события и даты:", type: "matching", 
+            left: [ {id: 'а', text: 'Введение патриаршества в России'}, {id: 'б', text: 'Вхождение Восточной Украины в состав России'}, {id: 'в', text: 'Столбовский мир'}, {id: 'г', text: 'Принятие Соборного уложения'} ],
+            right: [ {id: '1', text: '1649 год'}, {id: '2', text: '1654 год'}, {id: '3', text: '1589 год'}, {id: '4', text: '1617 год'} ],
+            correct: { 'а': '3', 'б': '2', 'в': '4', 'г': '1' }
+        },
+        { q: "Кто из исторических лиц принимал участие в событиях Смутного времени?", type: "single", options: ["Александр Меншиков", "Ермак Тимофеевич", "Прокопий Ляпунов", "Степан Разин"], correct: ["Прокопий Ляпунов"] },
+        { q: "Что из названного было одной из главных причин городских восстаний в XVII веке?", type: "single", options: ["введение рекрутской повинности", "ухудшение положения низов из-за введения новых налогов", "церковный раскол", "поражение в войне"], correct: ["ухудшение положения низов из-за введения новых налогов"] },
+        { q: "Понятие «вечный мир» связано с отношениями России в XVII веке с…", type: "single", options: ["Речью Посполитой", "Швецией", "Османской империей", "Крымским ханством"], correct: ["Речью Посполитой"] },
+        { q: "Одним из следствий принятия Соборного уложения было…", type: "single", options: ["отмена местничества", "учреждение патриаршества", "создание армии", "установление бессрочного сыска беглых крестьян"], correct: ["установление бессрочного сыска беглых крестьян"] }
+    ],
+    v2: [
+        { q: "Какие из этих названий обозначали восточнославянские племена?", type: "single", options: ["хазары", "печенеги", "чудь", "полочане"], correct: ["полочане"] },
+        { q: "Укажите дату призвания Рюрика на княжение.", type: "single", options: ["862 г.", "882 г.", "907 г.", "988 г."], correct: ["862 г."] },
+        { q: "Что было основным хозяйственным занятием восточных славян?", type: "single", options: ["скотоводство", "бортничество", "земледелие", "торговля"], correct: ["земледелие"] },
+        { q: "Какой из этих городов являлся племенным центром древлян?", type: "single", options: ["Киев", "Новгород", "Чернигов", "Искоростень"], correct: ["Искоростень"] },
+        { 
+            q: "Сопоставьте княжения и даты:", type: "matching", 
+            left: [ {id: 'а', text: 'Владимир Святославич'}, {id: 'б', text: 'Ярослав Мудрый'}, {id: 'в', text: 'Святослав'}, {id: 'г', text: 'Игорь'} ],
+            right: [ {id: '1', text: '980–1015 гг.'}, {id: '2', text: '964–972 гг.'}, {id: '3', text: '912–945 гг.'}, {id: '4', text: '1019–1054 гг.'} ],
+            correct: { 'а': '1', 'б': '4', 'в': '2', 'г': '3' }
+        },
+        { q: "Князь Ярослав Мудрый нанёс решающее поражение…", type: "single", options: ["хазарам", "печенегам", "половцам", "монголам"], correct: ["печенегам"] },
+        { q: "Какие из этих городов не были столицами княжеств в XII — начале XIII века?", type: "multiple", options: ["Владимир", "Переяславль-Рязанский", "Москва", "Киев"], correct: ["Переяславль-Рязанский", "Москва"] },
+        { q: "Первым ханом Золотой Орды был…", type: "single", options: ["Чингисхан", "Тохтамыш", "Батый", "Мамай"], correct: ["Батый"] },
+        { q: "Какие из этих сражений произошли между русскими и монголо-татарскими войсками?", type: "multiple", options: ["битва на Калке", "Ледовое побоище", "битва на реке Сить", "Невская битва"], correct: ["битва на Калке", "битва на реке Сить"] },
+        { q: "Первое упоминание Москвы в летописи относится к…", type: "single", options: ["1147 г.", "1223 г.", "1240 г.", "1380 г."], correct: ["1147 г."] },
+        { q: "Какая формулировка характеризует политику Александра Невского?", type: "single", options: ["союз с Западом", "борьба с агрессией западных стран и подчинение орде", "вооруженное сопротивление Орде", "присоединение Ливонского ордена"], correct: ["борьба с агрессией западных стран и подчинение орде"] },
+        { 
+            q: "Сопоставьте события и даты:", type: "matching", 
+            left: [ {id: 'а', text: 'Куликовская битва'}, {id: 'б', text: 'Ледовое побоище'}, {id: 'в', text: 'Поход Тохтамыша'}, {id: 'г', text: 'Строительство каменного Кремля'} ],
+            right: [ {id: '1', text: '1367 г.'}, {id: '2', text: '1380 г.'}, {id: '3', text: '1382 г.'}, {id: '4', text: '1242 г.'} ],
+            correct: { 'а': '2', 'б': '4', 'в': '3', 'г': '1' }
+        },
+        { q: "Какое из этих событий связано с эпохой Василия II?", type: "single", options: ["междоусобная война в Московском княжестве", "присоединение Твери", "стояние на реке Угре", "принятие Судебника"], correct: ["междоусобная война в Московском княжестве"] },
+        { q: "Ликвидация зависимости Руси от Золотой Орды связана с именем…", type: "single", options: ["Дмитрий Донской", "Иван III", "Иван Калита", "Василий III"], correct: ["Иван III"] },
+        { q: "Что относилось к функциям Земского собора?", type: "single", options: ["принятие новых законов", "управление армией", "суд над боярами", "совещание о вопросах внешней и внутренней политики"], correct: ["совещание о вопросах внешней и внутренней политики"] },
+        { q: "Какие из этих реформ были проведены под влиянием Избранной рады?", type: "multiple", options: ["введение подушной подати", "создание опричнины", "создание стрелецкого войска", "создание Судебника 1550 года"], correct: ["создание стрелецкого войска", "создание Судебника 1550 года"] },
+        { q: "В 1552 году состоялось…", type: "single", options: ["присоединение Астрахани", "взятие Казани", "начало Ливонской войны", "отмена опричнины"], correct: ["взятие Казани"] },
+        { q: "Наиболее известными деятелями опричнины были…", type: "multiple", options: ["Андрей Курбский", "митрополит Филипп", "Малюта Скуратов", "Алексей Басманов"], correct: ["Малюта Скуратов", "Алексей Басманов"] },
+        { q: "Ермак возглавлял поход на", type: "single", options: ["Крымское ханство", "Казанское ханство", "Сибирское ханство", "Астраханское ханство"], correct: ["Сибирское ханство"] },
+        { q: "Земля, принадлежащая владельцу на правах полной наследственной собственности, называлась…", type: "single", options: ["вотчина", "поместье", "удел", "кормление"], correct: ["вотчина"] },
+        { q: "Опричнина привела к…", type: "multiple", options: ["хозяйственному упадку", "расцвету культуры", "подрыву военной мощи государства", "экономическому росту"], correct: ["хозяйственному упадку", "подрыву военной мощи государства"] },
+        { q: "Какое из этих государств не противостояло России в Ливонской войне.", type: "single", options: ["Швеция", "Османская империя", "Речь Посполитая", "Дания"], correct: ["Османская империя"] },
+        { q: "Какой из этих приказов занимался вопросами внешней политики.", type: "single", options: ["Челобитный", "Разрядный", "Поместный", "Посольский"], correct: ["Посольский"] },
+        { q: "Принятие титула царь подчеркивало преемственность московской Руси:", type: "single", options: ["от Византии", "от Золотой Орды", "от Римской империи", "от Киевской Руси"], correct: ["от Византии"] },
+        { 
+            q: "Сопоставьте события и даты:", type: "matching", 
+            left: [ {id: 'а', text: 'Правление Ивана Грозного'}, {id: 'б', text: 'Опричнина'}, {id: 'в', text: 'Ливонская война'}, {id: 'г', text: 'Поход Ермака'} ],
+            right: [ {id: '1', text: '1558–1583 гг.'}, {id: '2', text: '1581–1585 гг.'}, {id: '3', text: '1565–1572 гг.'}, {id: '4', text: '1533–1584 гг.'} ],
+            correct: { 'а': '4', 'б': '3', 'в': '1', 'г': '2' }
+        },
+        { q: "Кого в Смутное время называли «тушинским вором»?", type: "single", options: ["Лжедмитрий 1", "Лжедмитрий 2", "Иван Болотников", "Василий Шуйский"], correct: ["Лжедмитрий 2"] },
+        { q: "Какое из этих восстаний предшествовало созыву Земского собора в 1649г?", type: "single", options: ["Медный бунт", "восстание Степана Разина", "соляной бунт", "восстание Ивана Болотникова"], correct: ["соляной бунт"] },
+        { q: "Война с Речью Посполитой закончилась (1654 - 1667 год)…", type: "single", options: ["Андрусовским перемирием", "Столбовским миром", "Поляновским миром", "Кардисским миром"], correct: ["Андрусовским перемирием"] },
+        { q: "Какое из этих явлений не относится к экономическому развитию России в 17-м веке?", type: "single", options: ["формирование рынка", "появление мануфактур", "создание торгового флота", "рост городов"], correct: ["создание торгового флота"] },
+        { 
+            q: "Сопоставьте события и даты:", type: "matching", 
+            left: [ {id: 'а', text: 'Правление Алексея Михайловича'}, {id: 'б', text: 'Восстание С. Разина'}, {id: 'в', text: 'Правление Михаила Фёдоровича'}, {id: 'г', text: 'Ливонская война'} ],
+            right: [ {id: '1', text: '1563–1571'}, {id: '2', text: '1558–1583'}, {id: '3', text: '1645–1676'}, {id: '4', text: '1613–1645'} ],
+            correct: { 'а': '3', 'б': '1', 'в': '4', 'г': '2' }
+        }
+    ]
+};
+
+// State
+let currentVariant = null;
+let currentQuestions = [];
+let currentIndex = 0;
+let userAnswers = [];
+let isQuestionAnswered = false;
+
+// DOM Elements
+const menuScreen = document.getElementById('menu-screen');
+const quizScreen = document.getElementById('quiz-screen');
+const resultsScreen = document.getElementById('results-screen');
+const subtitle = document.getElementById('subtitle');
+const questionText = document.getElementById('question-text');
+const questionHint = document.getElementById('question-hint');
+const optionsContainer = document.getElementById('options-container');
+const progressText = document.getElementById('progress-text');
+const progressBar = document.getElementById('progress-bar');
+const nextBtn = document.getElementById('next-btn');
+const mainContainer = document.getElementById('main-container');
+
+function startQuiz(variant) {
+    currentVariant = variant;
+    currentQuestions = quizData[variant];
+    currentIndex = 0;
+    userAnswers = [];
+    
+    subtitle.innerText = variant === 'v1' ? 'Вариант I' : 'Вариант II';
+    
+    menuScreen.classList.add('hidden');
+    quizScreen.classList.remove('hidden');
+    quizScreen.classList.add('flex');
+    
+    renderQuestion();
+}
+
+function renderQuestion() {
+    const q = currentQuestions[currentIndex];
+    questionText.innerText = `${currentIndex + 1}. ${q.q}`;
+    optionsContainer.innerHTML = '';
+    mainContainer.scrollTop = 0;
+
+    if (q.type === 'matching') {
+        questionHint.innerText = '(Выберите правильную цифру для каждой буквы)';
+        
+        // Список дат (сверху)
+        let targetsHtml = `<div class="mb-5 p-3 sm:p-4 bg-[#111] border border-[#333] rounded-xl shadow-inner">
+            <div class="text-[13px] sm:text-sm font-semibold text-gray-400 mb-3 border-b border-[#333] pb-2 uppercase tracking-wider">Варианты для выбора:</div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">`;
+        q.right.forEach(r => {
+            targetsHtml += `<div class="text-gray-200 text-sm sm:text-[15px] flex items-center bg-[#1a1a1a] p-2 rounded-lg border border-[#2a2a2a]"><span class="font-bold text-white bg-[#0078d4] w-7 h-7 flex items-center justify-center rounded shrink-0 mr-3 shadow-md">${r.id}</span> <span class="leading-tight">${r.text}</span></div>`;
+        });
+        targetsHtml += `</div></div>`;
+        
+        // Селекты (выстроены вертикально для мобилок)
+        let leftHtml = '<div class="space-y-3 sm:space-y-4">';
+        q.left.forEach(l => {
+            leftHtml += `
+            <div class="flex flex-row items-center p-3 sm:p-4 border border-[#333] bg-[#1a1a1a] rounded-xl relative group">
+                <div class="font-bold text-[#5cb0ff] text-lg mr-3 shrink-0">${l.id})</div>
+                <div class="text-gray-100 text-sm sm:text-base flex-grow pr-3 leading-snug">${l.text}</div>
+                <select id="match_${l.id}" class="custom-select shrink-0 bg-[#222] border-2 border-[#444] text-white rounded-xl focus:border-[#0078d4] outline-none transition-colors shadow-sm w-[72px] sm:w-24 text-center font-bold">
+                    <option value="">-</option>
+                    ${q.right.map(r => `<option value="${r.id}">${r.id}</option>`).join('')}
+                </select>
+            </div>`;
+        });
+        leftHtml += '</div>';
+        
+        optionsContainer.innerHTML = targetsHtml + leftHtml;
+
+    } else {
+        questionHint.innerText = q.type === 'multiple' ? '(Выберите один или несколько вариантов)' : '(Выберите один вариант)';
+        
+        q.options.forEach((opt, index) => {
+            const inputType = q.type === 'multiple' ? 'checkbox' : 'radio';
+            const name = q.type === 'multiple' ? `q${currentIndex}_${index}` : `q${currentIndex}`;
+            
+            const label = document.createElement('label');
+            label.className = 'flex items-center p-3 sm:p-4 border border-[#333] rounded-xl cursor-pointer option-label w-full';
+            
+            const input = document.createElement('input');
+            input.type = inputType;
+            input.name = name;
+            input.value = opt;
+            input.className = 'custom-input shrink-0 mr-3 sm:mr-4 bg-[#222] border-[#555]';
+            
+            const span = document.createElement('span');
+            span.className = 'text-gray-100 text-[15px] sm:text-[17px] font-medium leading-tight flex-grow';
+            span.innerText = opt;
+            
+            label.appendChild(input);
+            label.appendChild(span);
+            optionsContainer.appendChild(label);
+        });
+    }
+
+    isQuestionAnswered = false;
+    nextBtn.innerText = 'Ответить';
+    nextBtn.className = 'win11-btn w-full text-white text-[17px] font-semibold py-3 sm:py-4 px-6 rounded-xl transition-all duration-200 active:scale-95 disabled:opacity-50';
+    
+    // Прогресс
+    progressText.innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
+    progressBar.style.width = `${((currentIndex) / currentQuestions.length) * 100}%`;
+}
+
+function handleAction() {
+    if (!isQuestionAnswered) checkAnswer();
+    else moveToNext();
+}
+
+function checkAnswer() {
+    const q = currentQuestions[currentIndex];
+    let isCorrect = false;
+    
+    if (q.type === 'matching') {
+        const selects = optionsContainer.querySelectorAll('select');
+        const anyEmpty = Array.from(selects).some(s => s.value === "");
+        
+        if (anyEmpty) {
+            showMessage("Остались пустые поля", "Выберите цифру для каждой буквы.");
+            return;
+        }
+        
+        let allCorrect = true;
+        let userSelectionObj = {};
+        
+        selects.forEach(select => {
+            select.disabled = true;
+            const letter = select.id.replace('match_', '');
+            const userVal = select.value;
+            const correctVal = q.correct[letter];
+            userSelectionObj[letter] = userVal;
+            
+            const parentDiv = select.parentElement;
+            
+            if (userVal === correctVal) {
+                parentDiv.classList.add('correct-answer');
+                select.classList.add('bg-green-900/40', 'border-green-500');
+            } else {
+                parentDiv.classList.add('wrong-answer');
+                select.classList.add('bg-red-900/40', 'border-red-500');
+                allCorrect = false;
+            }
+        });
+        
+        isCorrect = allCorrect;
+        userAnswers.push({ question: q.q, type: 'matching', selectedObj: userSelectionObj, correctObj: q.correct, isCorrect });
+
+    } else {
+        const inputs = optionsContainer.querySelectorAll('input');
+        const checkedInputs = Array.from(inputs).filter(input => input.checked);
+        
+        if (checkedInputs.length === 0) {
+            showMessage("Нет ответа", "Выберите хотя бы один вариант.");
+            return;
+        }
+        
+        const selectedAnswers = checkedInputs.map(i => i.value);
+        
+        inputs.forEach(input => {
+            input.disabled = true;
+            const label = input.parentElement;
+            label.style.pointerEvents = 'none';
+            
+            const isCorrectOption = q.correct.includes(input.value);
+            const isSelected = input.checked;
+
+            if (q.type === 'multiple') {
+                if (isSelected && isCorrectOption) label.classList.add('correct-answer');
+                else if (isSelected && !isCorrectOption) label.classList.add('wrong-answer');
+                else if (!isSelected && isCorrectOption) {
+                    label.classList.add('missed-answer');
+                    const badge = document.createElement('span');
+                    badge.className = 'text-[#eab308] text-[11px] sm:text-xs font-bold ml-2 shrink-0 bg-yellow-500/20 px-2 py-1 rounded';
+                    badge.innerText = 'Пропущено';
+                    label.appendChild(badge);
+                }
+            } else {
+                if (isCorrectOption) label.classList.add('correct-answer');
+                else if (isSelected && !isCorrectOption) label.classList.add('wrong-answer');
+            }
+        });
+
+        if (q.type === 'multiple') {
+            const sortedSel = [...selectedAnswers].sort();
+            const sortedCor = [...q.correct].sort();
+            isCorrect = sortedSel.length === sortedCor.length && sortedSel.every((val, i) => val === sortedCor[i]);
+        } else {
+            isCorrect = selectedAnswers[0] === q.correct[0];
+        }
+        
+        userAnswers.push({ question: q.q, type: q.type, selected: selectedAnswers, correct: q.correct, isCorrect });
+    }
+    
+    isQuestionAnswered = true;
+    nextBtn.innerText = currentIndex === currentQuestions.length - 1 ? 'Завершить тест' : 'Следующий вопрос';
+    nextBtn.className = 'win11-btn-success w-full text-white text-[17px] font-semibold py-3 sm:py-4 px-6 rounded-xl transition-all duration-200 active:scale-95';
+    
+    // Скролл вниз на телефоне, чтобы точно было видно кнопку после ответа
+    setTimeout(() => { mainContainer.scrollTo({ top: mainContainer.scrollHeight, behavior: 'smooth' }); }, 100);
+}
+
+function moveToNext() {
+    if (currentIndex < currentQuestions.length - 1) {
+        currentIndex++;
+        renderQuestion();
+    } else {
+        finishQuiz();
+    }
+}
+
+function finishQuiz() {
+    quizScreen.classList.add('hidden');
+    quizScreen.classList.remove('flex');
+    resultsScreen.classList.remove('hidden');
+    resultsScreen.classList.add('flex');
+    
+    const score = userAnswers.filter(a => a.isCorrect).length;
+    document.getElementById('score').innerText = score;
+    document.getElementById('total-questions').innerText = currentQuestions.length;
+    
+    const resultsList = document.getElementById('results-list');
+    resultsList.innerHTML = '';
+    
+    userAnswers.forEach((ans, i) => {
+        const item = document.createElement('div');
+        item.className = `p-3 sm:p-4 rounded-xl border ${ans.isCorrect ? 'bg-green-500/10 border-green-500/30' : 'bg-red-500/10 border-red-500/30'}`;
+        
+        let html = `<p class="font-semibold text-gray-100 mb-2 text-sm sm:text-[15px] leading-snug">${i + 1}. ${ans.question}</p>`;
+        
+        if (ans.type === 'matching') {
+            const userStr = Object.entries(ans.selectedObj).map(([k,v]) => `${k}-${v}`).join(', ');
+            if (ans.isCorrect) html += `<p class="text-[13px] sm:text-sm text-green-400">Ваш ответ: <b>${userStr}</b> ✓</p>`;
+            else {
+                const corStr = Object.entries(ans.correctObj).map(([k,v]) => `${k}-${v}`).join(', ');
+                html += `<p class="text-[13px] sm:text-sm text-red-400 mb-1">Ваш ответ: <b>${userStr}</b> ✗</p>
+                         <p class="text-[13px] sm:text-sm text-green-400">Верно: <b>${corStr}</b></p>`;
+            }
+        } else {
+            if (ans.isCorrect) html += `<p class="text-[13px] sm:text-sm text-green-400">Ответ: <b>${ans.selected.join(', ')}</b> ✓</p>`;
+            else {
+                html += `<p class="text-[13px] sm:text-sm text-red-400 mb-1">Ваш ответ: <b>${ans.selected.join(', ')}</b> ✗</p>
+                         <p class="text-[13px] sm:text-sm text-green-400">Верно: <b>${ans.correct.join(', ')}</b></p>`;
+            }
+        }
+        item.innerHTML = html;
+        resultsList.appendChild(item);
+    });
+}
+
+function goHome() {
+    resultsScreen.classList.add('hidden');
+    resultsScreen.classList.remove('flex');
+    menuScreen.classList.remove('hidden');
+    progressBar.style.width = '0%';
+}
+
+const msgBox = document.getElementById('message-box');
+const msgTitle = document.getElementById('msg-title');
+const msgText = document.getElementById('msg-text');
+
+function showMessage(title, text) {
+    msgTitle.innerText = title;
+    msgText.innerText = text;
+    msgBox.classList.remove('hidden');
+    msgBox.classList.add('flex');
+}
+function closeMessage() {
+    msgBox.classList.add('hidden');
+    msgBox.classList.remove('flex');
+}
+</script>
+</body>
+</html>
