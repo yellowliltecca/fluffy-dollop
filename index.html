@@ -319,7 +319,8 @@
             50%      { opacity: 1; box-shadow: 0 0 12px rgba(59, 130, 246, 0.4); }
         }
 
-        .sound-toggle, .music-toggle {
+        /* Кнопки вкл/выкл */
+        .sound-toggle, .music-toggle, .music2-toggle {
             position: absolute;
             top: 12px;
             width: 40px;
@@ -336,32 +337,40 @@
             backdrop-filter: blur(10px);
             z-index: 20;
         }
-        .sound-toggle { right: 12px; }
-        .music-toggle { left: 12px; }
+        .music-toggle  { left: 12px; }
+        .music2-toggle { left: 60px; }
+        .sound-toggle  { right: 12px; }
 
-        .sound-toggle:hover, .music-toggle:hover {
+        .sound-toggle:hover, .music-toggle:hover, .music2-toggle:hover {
             background: rgba(37, 99, 235, 0.35);
             border-color: rgba(96, 165, 250, 0.6);
             color: #bfdbfe;
             transform: scale(1.05);
         }
-        .sound-toggle:active, .music-toggle:active { transform: scale(0.95); }
-        .sound-toggle.muted, .music-toggle.muted { color: #64748b; border-color: rgba(100, 116, 139, 0.4); }
+        .sound-toggle:active, .music-toggle:active, .music2-toggle:active { transform: scale(0.95); }
+        .sound-toggle.muted, .music-toggle.muted, .music2-toggle.muted { color: #64748b; border-color: rgba(100, 116, 139, 0.4); }
     </style>
 </head>
 <body class="min-h-[100dvh] flex flex-col items-center justify-start sm:justify-center p-2 sm:p-4 relative">
 
-    <!-- 🎵 Фоновая музыка (файл music.m4a рядом с HTML) -->
+    <!-- 🎵 Фоновая музыка (music.m4a) -->
     <audio id="bg-music" loop preload="auto">
         <source src="music.m4a" type="audio/mp4">
         <source src="music.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- 🎶 Вторая музыка (music2.m4a) -->
+    <audio id="bg-music2" loop preload="auto">
+        <source src="music2.m4a" type="audio/mp4">
+        <source src="music2.mp3" type="audio/mpeg">
     </audio>
 
     <div class="particles" id="particles"></div>
 
     <div id="app" class="win11-glow w-full max-w-3xl rounded-2xl sm:rounded-3xl flex flex-col flex-grow sm:flex-grow-0 sm:min-h-[600px] shadow-2xl relative z-10 overflow-hidden">
         
-        <button id="music-toggle" class="music-toggle" onclick="toggleMusic()" title="Музыка вкл/выкл" aria-label="Музыка вкл/выкл">
+        <!-- Кнопка трека 1 (слева) -->
+        <button id="music-toggle" class="music-toggle" onclick="toggleMusic()" title="Трек 1 вкл/выкл" aria-label="Трек 1">
             <svg id="music-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M9 18V5l12-2v13"></path>
                 <circle cx="6" cy="18" r="3"></circle>
@@ -375,6 +384,25 @@
             </svg>
         </button>
 
+        <!-- Кнопка трека 2 (левее звука) -->
+        <button id="music2-toggle" class="music2-toggle" onclick="toggleMusic2()" title="Трек 2 вкл/выкл" aria-label="Трек 2">
+            <svg id="music2-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="18" cy="16" r="3"></circle>
+                <path d="M2 12h4"></path>
+                <path d="M2 8h4"></path>
+                <path d="M2 16h4"></path>
+            </svg>
+            <svg id="music2-off-icon" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M9 18V5l12-2v13"></path>
+                <circle cx="6" cy="18" r="3"></circle>
+                <circle cx="18" cy="16" r="3"></circle>
+                <line x1="2" y1="2" x2="22" y2="22"></line>
+            </svg>
+        </button>
+
+        <!-- Кнопка звуковых эффектов (справа) -->
         <button id="sound-toggle" class="sound-toggle" onclick="toggleSound()" title="Звук вкл/выкл" aria-label="Звук вкл/выкл">
             <svg id="sound-on-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
@@ -477,42 +505,61 @@
 
 <script>
 // ============================================================
-// 🎵 ФОНОВАЯ МУЗЫКА (music.m4a)
+// 🎵 ФОНОВАЯ МУЗЫКА (music.m4a + music2.m4a)
 // ============================================================
-const bgMusic = document.getElementById('bg-music');
-const MUSIC_VOLUME = 0.20;
-bgMusic.volume = MUSIC_VOLUME;
+const bgMusic  = document.getElementById('bg-music');
+const bgMusic2 = document.getElementById('bg-music2');
 
-let musicEnabled = true;
-let musicStarted = false;
+const MUSIC_VOLUME  = 0.20;   // Громкость трека 1
+const MUSIC2_VOLUME = 0.15;   // Громкость трека 2 (чуть тише, чтобы не перебивал)
+bgMusic.volume  = MUSIC_VOLUME;
+bgMusic2.volume = MUSIC2_VOLUME;
 
-function startMusic() {
-    if (!musicEnabled || musicStarted) return;
-    const promise = bgMusic.play();
+let musicEnabled  = true;
+let music2Enabled = true;
+let musicStarted  = false;
+let music2Started = false;
+
+/** Универсальная попытка запуска трека */
+function tryPlay(audio, onSuccess) {
+    const promise = audio.play();
     if (promise !== undefined) {
-        promise.then(() => {
-            musicStarted = true;
-        }).catch(err => {
+        promise.then(onSuccess).catch(err => {
             console.warn('Автовоспроизведение заблокировано:', err);
         });
     }
 }
 
+/** Запуск трека 1 */
+function startMusic() {
+    if (!musicEnabled || musicStarted) return;
+    tryPlay(bgMusic, () => { musicStarted = true; });
+}
+
+/** Запуск трека 2 */
+function startMusic2() {
+    if (!music2Enabled || music2Started) return;
+    tryPlay(bgMusic2, () => { music2Started = true; });
+}
+
+/** Запуск обоих треков */
+function startAllMusic() {
+    startMusic();
+    startMusic2();
+}
+
+/** Вкл/выкл трека 1 */
 function toggleMusic() {
     musicEnabled = !musicEnabled;
-    const onIcon = document.getElementById('music-on-icon');
+    const onIcon  = document.getElementById('music-on-icon');
     const offIcon = document.getElementById('music-off-icon');
-    const btn = document.getElementById('music-toggle');
+    const btn     = document.getElementById('music-toggle');
 
     if (musicEnabled) {
         onIcon.classList.remove('hidden');
         offIcon.classList.add('hidden');
         btn.classList.remove('muted');
-        bgMusic.play().then(() => {
-            musicStarted = true;
-        }).catch(err => {
-            console.warn('Не удалось запустить музыку:', err);
-        });
+        tryPlay(bgMusic, () => { musicStarted = true; });
     } else {
         onIcon.classList.add('hidden');
         offIcon.classList.remove('hidden');
@@ -521,18 +568,42 @@ function toggleMusic() {
     }
 }
 
+/** Вкл/выкл трека 2 */
+function toggleMusic2() {
+    music2Enabled = !music2Enabled;
+    const onIcon  = document.getElementById('music2-on-icon');
+    const offIcon = document.getElementById('music2-off-icon');
+    const btn     = document.getElementById('music2-toggle');
+
+    if (music2Enabled) {
+        onIcon.classList.remove('hidden');
+        offIcon.classList.add('hidden');
+        btn.classList.remove('muted');
+        tryPlay(bgMusic2, () => { music2Started = true; });
+    } else {
+        onIcon.classList.add('hidden');
+        offIcon.classList.remove('hidden');
+        btn.classList.add('muted');
+        bgMusic2.pause();
+    }
+}
+
+// Автозапуск обеих дорожек при первом взаимодействии
 ['click', 'touchstart', 'keydown'].forEach(evt => {
     document.addEventListener(evt, function once() {
-        startMusic();
+        startAllMusic();
         document.removeEventListener(evt, once);
     }, { once: true });
 });
 
+// Пауза при сворачивании вкладки, возобновление при возврате
 document.addEventListener('visibilitychange', () => {
     if (document.hidden) {
-        if (!bgMusic.paused) bgMusic.pause();
-    } else if (musicEnabled && musicStarted) {
-        bgMusic.play().catch(() => {});
+        if (!bgMusic.paused)  bgMusic.pause();
+        if (!bgMusic2.paused) bgMusic2.pause();
+    } else {
+        if (musicEnabled && musicStarted)   bgMusic.play().catch(() => {});
+        if (music2Enabled && music2Started) bgMusic2.play().catch(() => {});
     }
 });
 
@@ -616,9 +687,9 @@ function playFinishSound() {
 
 function toggleSound() {
     soundEnabled = !soundEnabled;
-    const onIcon = document.getElementById('sound-on-icon');
+    const onIcon  = document.getElementById('sound-on-icon');
     const offIcon = document.getElementById('sound-off-icon');
-    const btn = document.getElementById('sound-toggle');
+    const btn     = document.getElementById('sound-toggle');
     if (soundEnabled) {
         onIcon.classList.remove('hidden');
         offIcon.classList.add('hidden');
@@ -813,7 +884,7 @@ function startQuiz(variant) {
     currentIndex = 0;
     userAnswers = [];
     
-    startMusic();
+    startAllMusic();
     
     subtitle.innerText = variant === 'v1' ? 'Вариант I' : 'Вариант II';
     
